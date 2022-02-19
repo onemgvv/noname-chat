@@ -6,7 +6,7 @@ import {
 } from '@nestjs/platform-fastify';
 import secureSession from 'fastify-secure-session';
 import compression from 'fastify-compress';
-import fastifyCookie from 'fastify-cookie';
+// import fastifyCookie from 'fastify-cookie';
 import { AppModule } from './app.module';
 import {
   SwaggerModule,
@@ -23,15 +23,15 @@ async function bootstrap() {
   // register requests compression
   app.register(compression, { encodings: ['gzip', 'deflate'] })
 
-  // register fastify cookie middleware
-  app.register(fastifyCookie, {
-    secret: process.env.COOKIE_SECRET
-  })
-
   // register session fastify middleware
   app.register(secureSession, {
     key: Buffer.from(process.env.SESSION_KEY, 'hex')
   });
+
+  // register fastify cookie middleware
+  // app.register(fastifyCookie, {
+  //   secret: process.env.COOKIE_SECRET
+  // })
 
   // use global validation pipes
   app.useGlobalPipes(new ValidationPipe({ transform: true }))
