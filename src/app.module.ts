@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule } from '@nestjs/config';
 import { ApiModule } from './api/api.module';
 import { AuthModule } from './auth/auth.module';
 import { DomainModule } from './domain/domain.module';
@@ -12,7 +12,7 @@ import { DatabaseModule } from './common/database/database.module';
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
       isGlobal: true,
-      cache: true
+      cache: true,
     }),
     DatabaseModule,
     ApiModule,
@@ -24,4 +24,4 @@ import { DatabaseModule } from './common/database/database.module';
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

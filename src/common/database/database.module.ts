@@ -1,9 +1,13 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
-import { postgresConfigAsync } from 'common/config/typeorm.config';
+import { mainDbConfigAsync } from '@config/main-db.config';
+import { chatDbConfigAsync } from '@config/chat-db.config';
 
 @Module({
-  imports: [TypeOrmModule.forRootAsync(postgresConfigAsync)]
+  imports: [
+    TypeOrmModule.forRootAsync(mainDbConfigAsync),
+    TypeOrmModule.forRootAsync(chatDbConfigAsync),
+
+  ]
 })
 export class DatabaseModule { }

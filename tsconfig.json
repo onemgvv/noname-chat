@@ -11,7 +11,20 @@
     "outDir": "./dist",
     "baseUrl": "./src",
     "incremental": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@enums/*": ["common/enums/*"],
+      "@decorators/*": ["common/decorators/*"],
+      "@interceptors/*": ["common/interceptors/*"],
+      "@config/*": ["common/config/*"],
+      "@database/*": ["common/database/*"],
+      "@persistence/*": ["persistence/*"],
+      "@common/*": ["common/*"],
+      "@domain/*": ["domain/*"],
+      "@utils/*": ["utils/*"],
+      "@auth/*": ["auth/*"],
+      "@api/*": ["api/*"]
+    }
   },
   "include": ["src/**/*"]
 }
