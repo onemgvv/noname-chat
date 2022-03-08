@@ -8,10 +8,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  BaseEntity,
 } from 'typeorm';
 
 @Entity('filter')
-export class Filter {
+export class Filter extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -15,10 +15,11 @@ import {
   OneToMany,
   UpdateDateColumn,
   CreateDateColumn,
+  BaseEntity,
 } from 'typeorm';
 
 @Entity('users')
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -40,7 +41,7 @@ export class User {
   @Column('varchar')
   password: string;
 
-  @Column({ type: 'string', nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   city: string;
 
   @Column({ type: 'int', nullable: true })

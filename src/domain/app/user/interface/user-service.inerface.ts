@@ -13,7 +13,7 @@ export interface IUserService {
   findUser(field: keyof User, value: any): Promise<User>;
   getBySocials(fieldId: SocialIds, userId: string): Promise<User>;
   update(userId: number, data: Partial<UserType>): Promise<User>;
-  receiveUser(): Promise<User[]>;
+  receiveUser(relations?: string[]): Promise<User[]>;
   getBlacklist(ownerId: number): Promise<NewBlockInterface[]>;
   block(ownerId: number, userId: number): Promise<NewBlockInterface>;
   unblock(ownerId: number, targetId: number): Promise<{ message: string }>;

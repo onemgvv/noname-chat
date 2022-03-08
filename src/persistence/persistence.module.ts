@@ -1,40 +1,46 @@
-import { Module } from '@nestjs/common';
+import { Blacklist } from '@persistence/app/blacklist/blacklist.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MessageRepositoryModule } from '@persistence/chat/message/message.module';
-import { DialogRepositoryModule } from '@persistence/chat/dialog/dialog.module';
-import { BlacklistRepositoryModule } from '@persistence/app/blacklist/blacklist.module';
-import { EliteRepositoryModule } from '@persistence/app/elite/elite.module';
-import { FilterRepositoryModule } from '@persistence/app/filter/filter.module';
+import { Module } from '@nestjs/common';
+import { UserRepositoryModule } from '@persistence/app/user/user.module';
 import { RoleRepositoryModule } from '@persistence/app/role/role.module';
 import { TopicRepositoryModule } from '@persistence/app/topic/topic.module';
-import { UserRepositoryModule } from '@persistence/app/user/user.module';
-import { Token } from '@persistence/app/token/token.entity';
-import { User } from '@persistence/app/user/user.entity';
-import { Topic } from '@persistence/app/topic/topic.entity';
-import { Role } from '@persistence/app/role/role.entity';
-import { Elite } from '@persistence/app/elite/elite.entity';
-import { Filter } from '@persistence/app/filter/filter.entity';
-import { Blacklist } from '@persistence/app/blacklist/blacklist.entity';
-import { Dialog } from '@persistence/chat/dialog/dialog.entity';
-import { Message } from '@persistence/chat/message/message.entity';
-
+import { EliteRepositoryModule } from '@persistence/app/elite/elite.module';
+import { FilterRepositoryModule } from '@persistence/app/filter/filter.module';
+import { DialogRepositoryModule } from '@persistence/chat/dialog/dialog.module';
+import { MessageRepositoryModule } from '@persistence/chat/message/message.module';
+import { BlacklistRepositoryModule } from '@persistence/app/blacklist/blacklist.module';
+import { CHAT_CONNECTION } from '@config/constants';
+import { User } from './app/user/user.entity';
+import { Role } from './app/role/role.entity';
+import { Topic } from './app/topic/topic.entity';
+import { Token } from './app/token/token.entity';
+import { Elite } from './app/elite/elite.entity';
+import { Filter } from './app/filter/filter.entity';
+import { Dialog } from './chat/dialog/dialog.entity';
+import { Message } from './chat/message/message.entity';
 @Module({
   imports: [
+    TypeOrmModule.forFeature([
+      User,
+      Role,
+      Topic,
+      Token,
+      Elite,
+      Filter,
+      Blacklist,
+    ]),
+    TypeOrmModule.forFeature([Dialog, Message], CHAT_CONNECTION),
     UserRepositoryModule,
     TopicRepositoryModule,
     RoleRepositoryModule,
     FilterRepositoryModule,
     EliteRepositoryModule,
-    BlacklistRepositoryModule,
     DialogRepositoryModule,
     MessageRepositoryModule,
-    TypeOrmModule.forFeature(
-      [User, Role, Token, Topic, Elite, Filter, Blacklist],
-      'default',
-    ),
-    TypeOrmModule.forFeature([Dialog, Message], 'chat'),
+    BlacklistRepositoryModule,
   ],
   exports: [
+    TypeOrmModule,
     UserRepositoryModule,
     TopicRepositoryModule,
     RoleRepositoryModule,

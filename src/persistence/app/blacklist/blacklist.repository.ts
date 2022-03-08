@@ -1,41 +1,39 @@
-import { Repository } from 'typeorm';
+import { IBlacklistRepository } from '@domain/app/user/interface/blacklist-repo.interface';
+import { EntityRepository, Repository } from 'typeorm';
 import { Blacklist } from '@persistence/app/blacklist/blacklist.entity';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ICreateBlacklist } from './interface/create.interface';
 
-@Injectable()
-export class BlacklistRepository {
+@EntityRepository(Blacklist)
+export class BlacklistRepository
+  extends Repository<Blacklist>
+  implements IBlacklistRepository
+{
   private allRelations = ['users'];
 
-  constructor(
-    @InjectRepository(Blacklist) private blacklistModel: Repository<Blacklist>,
-  ) {}
-
-  async create(data: ICreateBlacklist): Promise<Blacklist> {
-    const blacklist = await this.blacklistModel.create(data);
-    return this.blacklistModel.save(blacklist);
+  async newBlacklist(data: ICreateBlacklist): Promise<Blacklist> {
+    const blacklist = await this.create(data);
+    return this.save(blacklist);
   }
 
   async findAllByOwner(
     ownerId: number,
     relations?: string[],
   ): Promise<Blacklist[]> {
-    return this.blacklistModel.find({
+    return this.find({
       where: { ownerId },
       relations: relations ?? this.allRelations,
     });
   }
 
-  async delete(ownerId: number, userId: number): Promise<Blacklist> {
-    const blacklist = await this.blacklistModel.findOneOrFail({
+  async deleteOne(ownerId: number, userId: number): Promise<Blacklist> {
+    const blacklist = await this.findOneOrFail({
       where: { ownerId, userId },
     });
-    return this.blacklistModel.remove(blacklist);
+    return this.remove(blacklist);
   }
 
   async deleteAll(ownerId: number): Promise<Blacklist[]> {
-    const blacklist = await this.blacklistModel.find({ where: { ownerId } });
-    return this.blacklistModel.remove(blacklist);
+    const blacklist = await this.find({ where: { ownerId } });
+    return this.remove(blacklist);
   }
 }

@@ -1,45 +1,44 @@
-import { Repository } from 'typeorm';
+import { Repository, EntityRepository } from 'typeorm';
+// import { Message as MessageType } from '@domain/chat/message/message.type';
 import { Message } from '@persistence/chat/message/message.entity';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ICreateMessage } from './interface/create.interface';
+import { IMessageRepository } from '@domain/chat/message/interface/message-repo.interface';
+import { Message as MessageType } from '@domain/chat/message/message.type';
 
-@Injectable()
-export class MessageRepository {
-  constructor(
-    @InjectRepository(Message) private messageModel: Repository<Message>,
-  ) {}
-
-  async create(data: ICreateMessage): Promise<Message> {
-    const message = await this.messageModel.create(data);
-    return this.messageModel.save(message);
+@EntityRepository(Message)
+export class MessageRepository
+  extends Repository<Message>
+  implements IMessageRepository
+{
+  async newMessage(data: Partial<MessageType>): Promise<Message> {
+    const message = await this.create(data);
+    return this.save(message);
   }
 
   async findByDialogId(dialogId: number): Promise<Message[]> {
-    return this.messageModel.find({ where: { dialogId } });
+    return this.find({ where: { dialogId } });
   }
 
   async deleteByDialogId(dialogId: number): Promise<Message> {
-    const message = await this.messageModel.findOneOrFail({
+    const message = await this.findOneOrFail({
       where: { dialogId },
     });
-    return this.messageModel.remove(message);
+    return this.remove(message);
   }
 
-  async delete(id: number): Promise<Message> {
-    const message = await this.messageModel.findOneOrFail(id);
-    return this.messageModel.remove(message);
+  async deleteOne(id: number): Promise<Message> {
+    const message = await this.findOneOrFail(id);
+    return this.remove(message);
   }
 
   async getLastMessage(dialogId: number): Promise<Message> {
-    return this.messageModel.findOne({
+    return this.findOne({
       where: { dialogId },
       order: { created_at: 'DESC' },
     });
   }
 
   async markAsRead(dialogId: number): Promise<Message[]> {
-    const messages = await this.messageModel.find({
+    const messages = await this.find({
       where: { dialogId, read: false },
     });
 
@@ -47,6 +46,6 @@ export class MessageRepository {
       message.read = true;
     });
 
-    return this.messageModel.save(messages);
+    return this.save(messages);
   }
 }

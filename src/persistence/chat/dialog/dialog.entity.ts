@@ -6,11 +6,12 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Message } from '@persistence/chat/message/message.entity';
 
 @Entity('dialogs')
-export class Dialog {
+export class Dialog extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

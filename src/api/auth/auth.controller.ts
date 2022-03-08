@@ -1,5 +1,6 @@
-import { ISocialAuthService } from './../../auth/interface/sauth-service.interface';
-import { IAuthService } from './../../auth/interface/auth-service.interface';
+import { TransformInterceptor } from '@common/interceptors/transform.interceptor';
+import { ISocialAuthService } from '@auth/interface/sauth-service.interface';
+import { IAuthService } from '@auth/interface/auth-service.interface';
 import { LoginUserDto } from '@api/auth/dto/login.dto';
 import { CreateUserDto } from '@api/app/user/dto/create.dto';
 import {
@@ -12,6 +13,7 @@ import {
   BadRequestException,
   Patch,
   Inject,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { User } from '@persistence/app/user/user.entity';
@@ -21,10 +23,15 @@ import { VKAuthDto } from './dto/vk-auth.dto';
 import { AppleLoginDto } from './dto/apple-login.dto';
 import { AppleSignDto } from './dto/apple-sign.dto';
 import { IUserService } from '@domain/app/user/interface/user-service.inerface';
+import {
+  AUTH_SERVICE,
+  SOC_AUTH_SERVICE,
+  USER_SERVICE,
+} from '@config/constants';
 
-const UserService = () => Inject('UserService');
-const AuthService = () => Inject('AuthService');
-const SocAuthService = () => Inject('SocAuthService');
+const UserService = () => Inject(USER_SERVICE);
+const AuthService = () => Inject(AUTH_SERVICE);
+const SocAuthService = () => Inject(SOC_AUTH_SERVICE);
 
 @Controller('auth')
 export class AuthController {
@@ -36,6 +43,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(200)
+  @UseInterceptors(new TransformInterceptor(LoginUserDto))
   async login(@Res() response: Response, @Body() userDto: LoginUserDto) {
     const result = await this.authService.login(userDto);
     const { refreshToken, accessToken, user } = result;
@@ -48,6 +56,7 @@ export class AuthController {
 
   @Post('register/standard')
   @HttpCode(201)
+  @UseInterceptors(new TransformInterceptor(CreateUserDto))
   async register(@Res() response: Response, @Body() userDto: CreateUserDto) {
     const result = await this.authService.register(userDto);
     const { refreshToken, accessToken, user } = result;
@@ -60,6 +69,7 @@ export class AuthController {
 
   @Post('register/fast')
   @HttpCode(201)
+  @UseInterceptors(new TransformInterceptor(FastRegisterDto))
   async fastRegister(@Res() response: Response, @Body() dto: FastRegisterDto) {
     const result = await this.authService.fastRegister(dto.email);
     const { refreshToken, accessToken, user } = result;
@@ -93,6 +103,7 @@ export class AuthController {
 
   @Post('apple')
   @HttpCode(201)
+  @UseInterceptors(new TransformInterceptor(AppleLoginDto))
   async apple(@Res() response: Response, @Body() loginData: AppleLoginDto) {
     const appleUser = await this.socialAuthService.receiveAppleUser(loginData);
     const result = await this.authService.loginWithSocials(
@@ -112,6 +123,7 @@ export class AuthController {
 
   @Post('apple/mobile')
   @HttpCode(201)
+  @UseInterceptors(new TransformInterceptor(AppleSignDto))
   async appleMobile(
     @Res() response: Response,
     @Body() appleSignDto: AppleSignDto,
@@ -134,6 +146,7 @@ export class AuthController {
 
   @Post('vkontakte')
   @HttpCode(201)
+  @UseInterceptors(new TransformInterceptor(VKAuthDto))
   async vkontakte(@Res() response: Response, @Body() data: VKAuthDto) {
     const { userId, email, profile } =
       await this.socialAuthService.receiveVkUser(data.token, data.platform);

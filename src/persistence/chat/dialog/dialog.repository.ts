@@ -1,28 +1,36 @@
 import { IFindDialog } from './interface/find.interface';
 import { Message } from '@persistence/chat/message/message.entity';
-import { MessageRepository } from '@persistence/chat/message/message.repository';
-import { Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { Dialog } from '@persistence/chat/dialog/dialog.entity';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Inject } from '@nestjs/common';
 import { User } from '@persistence/app/user/user.entity';
-import { UserRepository } from '@persistence/app/user/user.repository';
-import { ICreateDialog } from './interface/create.interface';
+import { Dialog as DialogType } from '@domain/chat/dialog/dialog.type';
+import { IDialogRepository } from '@domain/chat/dialog/interface/dialog-repo.interface';
+import { MESSAGE_REPO, USER_REPO } from '@config/constants';
+import { IUserRepository } from '@domain/app/user/interface/user-repo.interface';
+import { IMessageRepository } from '@domain/chat/message/interface/message-repo.interface';
 
-@Injectable()
-export class DialogRepository {
+const UserRepo = () => Inject(USER_REPO);
+const MessageRepo = () => Inject(MESSAGE_REPO);
+
+@EntityRepository(Dialog)
+export class DialogRepository
+  extends Repository<Dialog>
+  implements IDialogRepository
+{
   constructor(
-    @InjectRepository(Dialog) private dialogModel: Repository<Dialog>,
-    private userRepository: UserRepository,
-    private messageRepository: MessageRepository,
-  ) {}
+    @UserRepo() private userRepository: IUserRepository,
+    @MessageRepo() private messageRepository: IMessageRepository,
+  ) {
+    super();
+  }
 
-  async create(data: ICreateDialog): Promise<IFindDialog> {
+  async newDialog(data: Partial<DialogType>): Promise<IFindDialog> {
     const dialog = await this.findByUsers(data.authorId, data.targetId);
     if (dialog) return dialog;
 
-    const newDialog = await this.dialogModel.create(data);
-    await this.dialogModel.save(newDialog);
+    const newDialog = await this.create(data);
+    await this.save(newDialog);
     return this.getDialogDeps(
       newDialog.authorId,
       newDialog.targetId,
@@ -31,12 +39,12 @@ export class DialogRepository {
   }
 
   async findById(id: number): Promise<IFindDialog> {
-    const dialog = await this.dialogModel.findOneOrFail(id);
+    const dialog = await this.findOneOrFail(id);
     return this.getDialogDeps(dialog.authorId, dialog.targetId, dialog.id);
   }
 
   async findByAuthor(authorId: number): Promise<IFindDialog[]> {
-    const dialogs = await this.dialogModel.find({ where: { authorId } });
+    const dialogs = await this.find({ where: { authorId } });
 
     return Promise.all(
       dialogs.map(async (dialog) => {
@@ -46,7 +54,7 @@ export class DialogRepository {
   }
 
   async findByUsers(authorId: number, targetId: number): Promise<IFindDialog> {
-    const dialog = await this.dialogModel.findOneOrFail({
+    const dialog = await this.findOneOrFail({
       where: { authorId, targetId },
     });
 
@@ -54,16 +62,16 @@ export class DialogRepository {
   }
 
   async setLastMessage(dialogId: number, messageId: number): Promise<Dialog> {
-    const dialog = await this.dialogModel.findOneOrFail({
+    const dialog = await this.findOneOrFail({
       where: { dialogId },
     });
     dialog.lastMessge = messageId;
-    return this.dialogModel.save(dialog);
+    return this.save(dialog);
   }
 
-  async delete(id: number): Promise<Dialog> {
-    const dialog = await this.dialogModel.findOneOrFail(id);
-    return this.dialogModel.remove(dialog);
+  async deleteOne(id: number): Promise<Dialog> {
+    const dialog = await this.findOneOrFail(id);
+    return this.remove(dialog);
   }
 
   async getDialogDeps(

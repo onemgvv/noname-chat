@@ -4,20 +4,21 @@ import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
+import { Dialog } from '@persistence/chat/dialog/dialog.entity';
+import { Message } from '@persistence/chat/message/message.entity';
 
 export class PostgresConfig {
   static getOrmConfig(configService: ConfigService): PostgresConnectionOptions {
     return {
-      name: 'chat',
       type: 'postgres',
       database: configService.get('CHAT_DB_NAME'),
       host: configService.get('CHAT_DB_HOST'),
       port: Number(configService.get('CHAT_DB_PORT')),
       username: configService.get('CHAT_DB_USERNAME'),
       password: configService.get('CHAT_DB_PASSWORD'),
-      entities: ['dist/src/**/*.entity.js'],
-      synchronize: true,
-      migrations: ['dist/src/database/migrations/*.js'],
+      entities: [Dialog, Message],
+      synchronize: false,
+      migrations: ['/src/database/migrations/*.js'],
       cli: {
         migrationsDir: 'src/database/migrations',
       },

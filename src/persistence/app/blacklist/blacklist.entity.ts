@@ -3,22 +3,23 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  BaseEntity
 } from 'typeorm';
 
 @Entity('blacklist')
-export class Blacklist {
+export class Blacklist extends BaseEntity  {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, (user) => user.id)
-  @JoinColumn({ name: 'id' })
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: 'ownerId', referencedColumnName: 'id' })
   ownerId: number;
 
-  @OneToOne(() => User, (user) => user.id)
-  @JoinColumn({ name: 'id' })
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   userId: number;
 
   @CreateDateColumn({

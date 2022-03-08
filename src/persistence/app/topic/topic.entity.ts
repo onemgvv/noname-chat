@@ -1,5 +1,6 @@
 import { User } from '@persistence/app/user/user.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -9,7 +10,7 @@ import {
 } from 'typeorm';
 
 @Entity('topics')
-export class Topic {
+export class Topic extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

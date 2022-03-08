@@ -1,62 +1,62 @@
-import { ICreateTopic } from './interface/create.interface';
+import { Topic as TopicType } from '@domain/app/topic/topic.type';
 import { Topic } from '@persistence/app/topic/topic.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { EntityRepository, Repository } from 'typeorm';
+import { ITopicRepository } from '@domain/app/topic/interface/topic-repo.interface';
 
-@Injectable()
-export class TopicRepository {
+@EntityRepository(Topic)
+export class TopicRepository
+  extends Repository<Topic>
+  implements ITopicRepository
+{
   private allRelations = ['users'];
 
-  constructor(@InjectRepository(Topic) private topicModel: Repository<Topic>) {}
+  async newTopic(data: Partial<TopicType>): Promise<Topic> {
+    const topic = await this.create(data);
 
-  async create(data: ICreateTopic): Promise<Topic> {
-    const topic = await this.topicModel.create(data);
-
-    return this.topicModel.save(topic);
+    return this.save(topic);
   }
 
   async receiveAll(relations?: string[]): Promise<Topic[]> {
-    return this.topicModel.find({
+    return this.find({
       relations: relations ?? this.allRelations,
     });
   }
 
   async findById(id: number, relations?: string[]): Promise<Topic> {
-    return this.topicModel.findOneOrFail(id, {
+    return this.findOneOrFail(id, {
       relations: relations ?? this.allRelations,
     });
   }
 
   async getByUserId(userId: number, relations?: string[]): Promise<Topic> {
-    return this.topicModel.findOneOrFail({
+    return this.findOneOrFail({
       where: { userId },
       relations: relations ?? this.allRelations,
     });
   }
 
-  async clear(): Promise<Topic[]> {
-    const topics = await this.topicModel.find();
-    return this.topicModel.remove(topics);
+  async clearAll(): Promise<Topic[]> {
+    const topics = await this.find();
+    return this.remove(topics);
   }
 
-  async delete(field: keyof Topic, value: any): Promise<Topic> {
-    const topic = await this.topicModel.findOneOrFail({
+  async deleteOne(field: keyof Topic, value: any): Promise<Topic> {
+    const topic = await this.findOneOrFail({
       where: { [field]: value },
     });
 
-    return this.topicModel.remove(topic);
+    return this.remove(topic);
   }
 
   async deleteUsersTopic(userId: number): Promise<Topic> {
-    const topic = await this.topicModel.findOneOrFail({ where: { userId } });
+    const topic = await this.findOneOrFail({ where: { userId } });
 
-    return this.topicModel.remove(topic);
+    return this.remove(topic);
   }
 
-  async deleteById(id: number) {
-    const topic = await this.topicModel.findOneOrFail(id);
+  async deleteById(id: number): Promise<Topic> {
+    const topic = await this.findOneOrFail(id);
 
-    return this.topicModel.remove(topic);
+    return this.remove(topic);
   }
 }

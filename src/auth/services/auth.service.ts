@@ -17,13 +17,14 @@ import { IMailService } from '@auth/interface/mail.interface';
 import { IUserService } from '@domain/app/user/interface/user-service.inerface';
 import { LoginUserDto } from '@api/auth/dto/login.dto';
 import { CreateUserDto } from '@api/app/user/dto/create.dto';
-import { ITokenService } from '@auth/token/interface/token-service.interface';
+import { ITokenService } from '@domain/app/token/interface/token-service.interface';
 import { IToken } from '@auth/interface/token.interface';
 import { ILogin } from '@auth/interface/login.interface';
+import { MAIL_SERVICE, TOKEN_SERVICE, USER_SERVICE } from '@config/constants';
 
-const UserService = () => Inject('UserService');
-const MailService = () => Inject('MailService');
-const TokenService = () => Inject('TokenService');
+const UserService = () => Inject(USER_SERVICE);
+const MailService = () => Inject(MAIL_SERVICE);
+const TokenService = () => Inject(TOKEN_SERVICE);
 
 @Injectable()
 export class AuthService implements IAuthService {

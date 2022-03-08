@@ -1,15 +1,16 @@
-import { ITokenRepository } from '@auth/token/interface/token-repo.interface';
+import { ITokenRepository } from '@domain/app/token/interface/token-repo.interface';
 import { Token } from '@persistence/app/token/token.entity';
 import { ICreateToken } from './interface/create.interface';
-import { IToken } from './../interface/token.interface';
+import { IToken } from '../../../auth/interface/token.interface';
 import { User } from '@persistence/app/user/user.entity';
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { IUserRepository } from '@domain/app/user/interface/user-repo.interface';
 import { ITokenService } from './interface/token-service.interface';
+import { TOKEN_REPO, USER_REPO } from '@config/constants';
 
-const TokenRepo = () => Inject('TokenRepo');
-const UserRepo = () => Inject('UserRepo');
+const TokenRepo = () => Inject(TOKEN_REPO);
+const UserRepo = () => Inject(USER_REPO);
 
 @Injectable()
 export class TokenService implements ITokenService {
@@ -30,6 +31,8 @@ export class TokenService implements ITokenService {
       id: user.id,
       email: user.email,
     };
+
+    // this.tokenRepository.
 
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.PRIVATE_KEY,
@@ -53,7 +56,7 @@ export class TokenService implements ITokenService {
       return this.tokenRepository.save(token);
     }
 
-    return this.tokenRepository.create(userId, refreshToken);
+    return this.tokenRepository.newToken(userId, refreshToken);
   }
 
   async getUserByToken(token: string): Promise<User> {

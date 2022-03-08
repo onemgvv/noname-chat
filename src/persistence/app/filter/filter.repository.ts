@@ -1,49 +1,46 @@
-import { IUpdateFilter } from './interface/update.interface';
-import { ICreateFilter } from './interface/create.interface';
-import { Repository } from 'typeorm';
+import { Filter as FilterType } from '@domain/app/filter/filter.type';
+import { EntityRepository, Repository } from 'typeorm';
 import { Filter } from '@persistence/app/filter/filter.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { IFilterRepository } from '@domain/app/filter/interface/filter-repo.interface';
 
-@Injectable()
-export class FilterRepository {
+@EntityRepository(Filter)
+export class FilterRepository
+  extends Repository<Filter>
+  implements IFilterRepository
+{
   private allRelations = ['users'];
 
-  constructor(
-    @InjectRepository(Filter) private filterModel: Repository<Filter>,
-  ) {}
-
-  async create(data: ICreateFilter): Promise<Filter> {
-    const filter = await this.filterModel.create(data);
-    return this.filterModel.save(filter);
+  async newFilter(data: Partial<FilterType>): Promise<Filter> {
+    const filter = await this.create(data);
+    return this.save(filter);
   }
 
   async getByUserId(userId: number, relations?: string[]): Promise<Filter> {
-    return this.filterModel.findOneOrFail({
+    return this.findOneOrFail({
       where: { userId },
       relations: relations ?? this.allRelations,
     });
   }
 
-  async update(id: number, data: IUpdateFilter): Promise<Filter> {
-    const filter = await this.filterModel.findOneOrFail(id);
+  async edit(id: number, data: Partial<FilterType>): Promise<Filter> {
+    const filter = await this.findOneOrFail(id);
 
     await Object.keys(data).forEach((key) => {
       filter[key] = data[key];
     });
 
-    return this.filterModel.save(filter);
+    return this.save(filter);
   }
 
-  async delete(id: number): Promise<Filter> {
-    const filter = await this.filterModel.findOneOrFail(id);
+  async deleteOne(id: number): Promise<Filter> {
+    const filter = await this.findOneOrFail(id);
 
-    return this.filterModel.remove(filter);
+    return this.remove(filter);
   }
 
-  async deleteByUserId(userId: number) {
-    const filter = await this.filterModel.findOne({ where: { userId } });
+  async deleteByUserId(userId: number): Promise<Filter> {
+    const filter = await this.findOne({ where: { userId } });
 
-    return this.filterModel.remove(filter);
+    return this.remove(filter);
   }
 }

@@ -1,8 +1,8 @@
 import {
   ACCESS_TOKEN_IS_NOT_SET,
   REFRESH_TOKEN_IS_NOT_SET,
-} from './../config/constants';
-import { TokenService } from '@auth/token/token.service';
+} from '@config/constants';
+import { TokenService } from '@domain/app/token/token.service';
 import {
   ACCESS_TOKEN_NAME,
   REFRESH_TOKEN_NAME,

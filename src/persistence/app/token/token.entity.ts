@@ -7,10 +7,11 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  BaseEntity,
 } from 'typeorm';
 
 @Entity('tokens')
-export class Token {
+export class Token extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

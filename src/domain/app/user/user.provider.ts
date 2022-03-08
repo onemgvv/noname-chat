@@ -1,7 +1,8 @@
-import { UserService } from './user.service';
+import { UserServiceImpl } from './user.service';
 import { Provider } from '@nestjs/common';
+import { USER_SERVICE } from '@config/constants';
 
 export const UserServiceProvider: Provider = {
-  provide: 'UserService',
-  useClass: UserService,
+  provide: USER_SERVICE,
+  useClass: UserServiceImpl,
 };

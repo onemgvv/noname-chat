@@ -7,10 +7,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  BaseEntity
 } from 'typeorm';
 
 @Entity('elites')
-export class Elite {
+export class Elite extends BaseEntity  {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,7 +21,7 @@ export class Elite {
   @Column('boolean')
   adult: boolean;
 
-  @Column('Date')
+  @Column('date')
   expiresIn: Date;
 
   @Column()
