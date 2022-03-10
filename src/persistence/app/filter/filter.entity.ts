@@ -11,7 +11,7 @@ import {
   BaseEntity,
 } from 'typeorm';
 
-@Entity('filter')
+@Entity({ name: 'filter' })
 export class Filter extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

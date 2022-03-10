@@ -1,39 +1,51 @@
+import * as cookieParser from 'cookie-parser';
+import * as session from 'express-session';
+import * as compression from 'compression';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import {
-  NestFastifyApplication,
-  FastifyAdapter,
-} from '@nestjs/platform-fastify';
-import secureSession from 'fastify-secure-session';
-import compression from 'fastify-compress';
-// import fastifyCookie from 'fastify-cookie';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { CheckBanInterceptor } from '@interceptors/check-ban.interceptor';
 
 async function bootstrap() {
   const PORT = process.env.PORT;
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter({ logger: true }),
-  );
+  const app = await NestFactory.create(AppModule);
 
   // register requests compression
-  app.register(compression, { encodings: ['gzip', 'deflate'] });
+  app.use(compression());
 
-  // register session fastify middleware
-  app.register(secureSession, {
-    key: Buffer.from(process.env.SESSION_KEY, 'hex'),
+  // register session middleware
+  app.use(
+    session({
+      secret: process.env.SESSION_KEY,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: true,
+        sameSite: 'none',
+        domain: 'https://noname.fun',
+        httpOnly: true,
+      },
+    }),
+  );
+
+  // register cookie middleware
+  app.use(cookieParser());
+
+  // enable cors
+  app.enableCors({
+    origin: ['https://noname.fun', 'https://acps.noname.fun'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin'],
+    credentials: true,
   });
-
-  // register fastify cookie middleware
-  // app.register(fastifyCookie, {
-  //   secret: process.env.COOKIE_SECRET
-  // })
 
   // use global validation pipes
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   // set global prefix "api"
   app.setGlobalPrefix('api');
+  // global interceptors
+  app.useGlobalInterceptors(new CheckBanInterceptor());
 
   // swagger configuration
   const config = new DocumentBuilder()

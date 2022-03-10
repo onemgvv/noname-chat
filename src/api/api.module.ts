@@ -7,6 +7,7 @@ import { EliteController } from './app/elite/elite.controller';
 import { FilterController } from './app/filter/filter.controller';
 import { DialogController } from './chat/dialog/dialog.controller';
 import { MessageController } from './chat/message/message.controller';
+import { FilestoreController } from './common/filestore/filestore.controller';
 
 @Module({
   imports: [DomainModule, AuthModule],
@@ -17,6 +18,7 @@ import { MessageController } from './chat/message/message.controller';
     EliteController,
     DialogController,
     MessageController,
+    FilestoreController,
   ],
 })
 export class ApiModule {}

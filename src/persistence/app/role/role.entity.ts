@@ -9,7 +9,7 @@ import {
   BaseEntity,
 } from 'typeorm';
 
-@Entity('roles')
+@Entity({ name: 'roles' })
 export class Role extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

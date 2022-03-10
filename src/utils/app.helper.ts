@@ -1,8 +1,22 @@
+import { User } from '@persistence/app/user/user.entity';
+import { IFindDialog } from '@persistence/chat/dialog/interface/find.interface';
+import { Message } from '@persistence/chat/message/message.entity';
 import { generate } from 'generate-password';
-import * as moment from 'moment';
-import { Payment } from '@common/enums/payment.enum';
+import { MESSAGE_REPO, USER_REPO } from '@config/constants';
+import { IUserRepository } from '@domain/app/user/interface/user-repo.interface';
+import { IMessageRepository } from '@domain/chat/message/interface/message-repo.interface';
+import { Inject } from '@nestjs/common';
+
+const UserRepo = () => Inject(USER_REPO);
+const MessageRepo = () => Inject(MESSAGE_REPO);
 
 export class Helper {
+  @UserRepo()
+  private static userRepository: IUserRepository;
+
+  @MessageRepo()
+  private static messageRepository: IMessageRepository;
+
   /**
    *
    * Calculate date
@@ -25,8 +39,8 @@ export class Helper {
    * @returns Promise<string> password
    *
    */
-  static async generatePassword(length: number, hasNum: boolean): Promise<string> {
-    return await generate({ length: length, numbers: hasNum });
+  static generatePassword(length: number, hasNum: boolean): string {
+    return generate({ length: length, numbers: hasNum });
   }
 
   /**
@@ -41,12 +55,12 @@ export class Helper {
   }
 
   /**
-   * 
+   *
    * Generate expires Time
-   * 
+   *
    * @param days number
    * @returns Date
-   * 
+   *
    */
   static getExpiresTime(days: number): Date {
     const today = new Date();
@@ -55,20 +69,55 @@ export class Helper {
 
   /**
    *  Generate random name
-   * 
+   *
    * @returns name string
-   * 
+   *
    */
   static generateRandomName(): string {
-    return "";
+    return '';
   }
 
   /**
-   * 
+   *
    * Generate random Online
-   * 
+   *
    */
-  static async generateRandomOnline(max: number, min: number): Promise<number> {
-    return await Math.floor(min + Math.random() * (max - min + 1));
+  static generateRandomOnline(max: number, min: number): number {
+    return Math.floor(min + Math.random() * (max - min + 1));
+  }
+
+  static getRandomBotAvatar(): string {
+    const photo = [
+      'premium_memojies/Frame17.png',
+      'premium_memojies/Frame14.png',
+      'premium_memojies/Frame10.png',
+      'default_memojies/Frame11.png',
+      'default_memojies/Frame8.png',
+    ];
+
+    const index = Math.floor(Math.random() * photo.length);
+    return photo[index];
+  }
+
+  static async getDialogDeps(
+    authorId: number,
+    targetId: number,
+    dialogId: number,
+  ): Promise<IFindDialog> {
+    const author: User = await this.userRepository.getAttributes(
+      ['id', 'name', 'photo', 'email'],
+      authorId,
+    );
+
+    const target: User = await this.userRepository.getAttributes(
+      ['id', 'name', 'photo', 'email'],
+      targetId,
+    );
+
+    const lastMessage: Message = await this.messageRepository.getLastMessage(
+      dialogId,
+    );
+
+    return { id: dialogId, author, target, lastMessage };
   }
 }

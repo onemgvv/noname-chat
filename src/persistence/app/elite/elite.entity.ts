@@ -7,11 +7,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  BaseEntity
+  BaseEntity,
 } from 'typeorm';
 
-@Entity('elites')
-export class Elite extends BaseEntity  {
+@Entity({ name: 'elites' })
+export class Elite extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -16,9 +16,10 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   BaseEntity,
+  JoinColumn,
 } from 'typeorm';
 
-@Entity('users')
+@Entity({ name: 'users' })
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -69,16 +70,21 @@ export class User extends BaseEntity {
   appleId: string;
 
   @ManyToMany(() => Role, (role) => role.users)
-  @JoinTable()
+  @JoinTable({
+    name: 'user_roles',
+  })
   roles: Role[];
 
   @OneToOne(() => Filter)
+  @JoinColumn()
   filter: Filter;
 
   @OneToOne(() => Token, (token) => token.user)
+  @JoinColumn()
   token: Token;
 
   @OneToOne(() => Elite, (elite) => elite.user)
+  @JoinColumn()
   elite: Elite;
 
   @OneToMany(() => Topic, (topic) => topic.user)

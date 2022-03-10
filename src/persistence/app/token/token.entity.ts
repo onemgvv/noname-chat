@@ -10,7 +10,7 @@ import {
   BaseEntity,
 } from 'typeorm';
 
-@Entity('tokens')
+@Entity({ name: 'tokens' })
 export class Token extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

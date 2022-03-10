@@ -1,9 +1,9 @@
-import { TOPIC_REPO } from '@config/constants';
 import { Inject, Injectable } from '@nestjs/common';
 import { Topic } from '@persistence/app/topic/topic.entity';
 import { ITopicRepository } from './interface/topic-repo.interface';
 import { ITopicService } from './interface/topic-service.interface';
 import { Topic as TopicType } from './topic.type';
+import { TOPIC_REPO } from '@config/constants';
 
 const TopicRepo = () => Inject(TOPIC_REPO);
 

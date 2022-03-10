@@ -7,7 +7,6 @@ import { Roles } from '@decorators/roles.decorator';
 import { ITopicService } from '@domain/app/topic/interface/topic-service.interface';
 import { RolesList } from '@enums/roles.enum';
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -36,8 +35,6 @@ export class TopicController {
   @UseInterceptors(new TransformInterceptor(CreateTopicDto))
   async create(@Body() topicDto: CreateTopicDto) {
     let topic: Topic = await this.topicService.findByUserId(topicDto.userId);
-    if (topic) throw new BadRequestException('У вас уже есть активная тема!');
-
     topic = await this.topicService.create(topicDto);
     return { message: 'Тема успешно создана!', topic };
   }

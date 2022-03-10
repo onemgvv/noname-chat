@@ -6,11 +6,11 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  BaseEntity
+  BaseEntity,
 } from 'typeorm';
 
-@Entity('blacklist')
-export class Blacklist extends BaseEntity  {
+@Entity({ name: 'blacklist' })
+export class Blacklist extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

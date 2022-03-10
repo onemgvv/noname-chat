@@ -1,62 +1,103 @@
+import {
+  TOPIC_NOT_FOUND,
+  TOPICS_NOT_FOUND,
+} from './../../../common/config/constants';
 import { Topic as TopicType } from '@domain/app/topic/topic.type';
 import { Topic } from '@persistence/app/topic/topic.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { ITopicRepository } from '@domain/app/topic/interface/topic-repo.interface';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
+@Injectable()
 @EntityRepository(Topic)
 export class TopicRepository
   extends Repository<Topic>
   implements ITopicRepository
 {
-  private allRelations = ['users'];
+  private allRelations = ['user'];
 
-  async newTopic(data: Partial<TopicType>): Promise<Topic> {
+  newTopic = async (data: Partial<TopicType>): Promise<Topic> => {
     const topic = await this.create(data);
 
     return this.save(topic);
-  }
+  };
 
-  async receiveAll(relations?: string[]): Promise<Topic[]> {
-    return this.find({
+  receiveAll = async (relations?: string[]): Promise<Topic[]> => {
+    const topics = await this.find({
       relations: relations ?? this.allRelations,
     });
-  }
 
-  async findById(id: number, relations?: string[]): Promise<Topic> {
-    return this.findOneOrFail(id, {
-      relations: relations ?? this.allRelations,
-    });
-  }
+    if (topics.length === 0) throw new NotFoundException(TOPICS_NOT_FOUND);
 
-  async getByUserId(userId: number, relations?: string[]): Promise<Topic> {
-    return this.findOneOrFail({
-      where: { userId },
-      relations: relations ?? this.allRelations,
-    });
-  }
+    return topics;
+  };
 
-  async clearAll(): Promise<Topic[]> {
+  findById = async (id: number, relations?: string[]): Promise<Topic> => {
+    let topic: Topic;
+    try {
+      topic = await this.findOneOrFail(id, {
+        relations: relations ?? this.allRelations,
+      });
+    } catch (error) {
+      throw new NotFoundException(TOPIC_NOT_FOUND);
+    }
+
+    return topic;
+  };
+
+  getByUserId = async (
+    userId: number,
+    relations?: string[],
+  ): Promise<Topic> => {
+    let topic: Topic;
+    try {
+      topic = await this.findOneOrFail({
+        where: { userId },
+        relations: relations ?? this.allRelations,
+      });
+    } catch (error) {
+      throw new NotFoundException(TOPIC_NOT_FOUND);
+    }
+
+    return topic;
+  };
+
+  clearAll = async (): Promise<Topic[]> => {
     const topics = await this.find();
+    if (topics.length === 0) throw new NotFoundException(TOPICS_NOT_FOUND);
     return this.remove(topics);
-  }
+  };
 
-  async deleteOne(field: keyof Topic, value: any): Promise<Topic> {
-    const topic = await this.findOneOrFail({
-      where: { [field]: value },
-    });
-
-    return this.remove(topic);
-  }
-
-  async deleteUsersTopic(userId: number): Promise<Topic> {
-    const topic = await this.findOneOrFail({ where: { userId } });
-
-    return this.remove(topic);
-  }
-
-  async deleteById(id: number): Promise<Topic> {
-    const topic = await this.findOneOrFail(id);
+  deleteOne = async (field: keyof Topic, value: any): Promise<Topic> => {
+    let topic: Topic;
+    try {
+      topic = await this.findOneOrFail({
+        where: { [field]: value },
+      });
+    } catch (error) {
+      throw new NotFoundException(TOPIC_NOT_FOUND);
+    }
 
     return this.remove(topic);
-  }
+  };
+
+  deleteUsersTopic = async (userId: number): Promise<Topic> => {
+    let topic: Topic;
+    try {
+      topic = await this.findOneOrFail({ where: { userId } });
+    } catch (error) {
+      throw new NotFoundException(TOPIC_NOT_FOUND);
+    }
+    return this.remove(topic);
+  };
+
+  deleteById = async (id: number): Promise<Topic> => {
+    let topic: Topic;
+    try {
+      topic = await this.findOneOrFail(id);
+    } catch (error) {
+      throw new NotFoundException(TOPIC_NOT_FOUND);
+    }
+    return this.remove(topic);
+  };
 }

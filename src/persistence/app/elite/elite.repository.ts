@@ -1,7 +1,13 @@
+import { NotFoundException } from '@nestjs/common';
 import { Elite as EliteType } from '@domain/app/elite/elite.type';
 import { EntityRepository, Repository } from 'typeorm';
 import { Elite } from '@persistence/app/elite/elite.entity';
 import { IEliteRepository } from '@domain/app/elite/interface/elite-repo.interface';
+import {
+  ACTIVE_ELITES_NOT_FOUND,
+  ELITES_NOT_FOUND,
+  ELITE_NOT_FOUND,
+} from '@config/constants';
 
 @EntityRepository(Elite)
 export class EliteRepository
@@ -16,40 +22,68 @@ export class EliteRepository
   }
 
   async findActive(relations?: string[]): Promise<Elite[]> {
-    return this.find({ relations: relations ?? this.allRelations }).then(
-      (elites: Elite[]) => {
-        const today = new Date();
-        return elites.filter(
-          async (elite) =>
-            (await elite.expiresIn.getMilliseconds()) > today.getMilliseconds(),
-        );
-      },
+    const elites = await this.find({
+      relations: relations ?? this.allRelations,
+    });
+    if (elites.length === 0)
+      throw new NotFoundException(ACTIVE_ELITES_NOT_FOUND);
+
+    const today = new Date();
+    return elites.filter(
+      async (elite) =>
+        (await elite.expiresIn.getMilliseconds()) > today.getMilliseconds(),
     );
   }
 
   async receiveAll(relations?: string[]): Promise<Elite[]> {
-    return this.find({ relations: relations ?? this.allRelations });
+    const elites = await this.find({
+      relations: relations ?? this.allRelations,
+    });
+    if (elites.length === 0) throw new NotFoundException(ELITES_NOT_FOUND);
+
+    return elites;
   }
 
   async findByUserId(userId: number, relations?: string[]): Promise<Elite> {
-    return this.findOneOrFail({
-      where: { userId },
-      relations: relations ?? this.allRelations,
-    });
+    let elite: Elite;
+    try {
+      elite = await this.findOneOrFail({
+        where: { userId },
+        relations: relations ?? this.allRelations,
+      });
+    } catch (error) {
+      throw new NotFoundException(ELITE_NOT_FOUND);
+    }
+
+    return elite;
   }
 
   async deleteByUserId(userId: number): Promise<Elite> {
-    const elite = await this.findOneOrFail({ where: { userId } });
+    let elite: Elite;
+    try {
+      elite = await this.findOneOrFail({ where: { userId } });
+    } catch (error) {
+      throw new NotFoundException(ELITE_NOT_FOUND);
+    }
+
     return this.remove(elite);
   }
 
   async deleteOne(id: number): Promise<Elite> {
-    const elite = await this.findOneOrFail(id);
+    let elite: Elite;
+    try {
+      elite = await this.findOneOrFail(id);
+    } catch (error) {
+      throw new NotFoundException(ELITE_NOT_FOUND);
+    }
+
     return this.remove(elite);
   }
 
   async deleteAll(): Promise<Elite[]> {
     const elites = await this.find();
+    if (elites.length === 0) throw new NotFoundException(ELITES_NOT_FOUND);
+
     return this.remove(elites);
   }
 }

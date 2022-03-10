@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Message } from '@persistence/chat/message/message.entity';
 
-@Entity('dialogs')
+@Entity({ name: 'dialogs' })
 export class Dialog extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

@@ -1,3 +1,5 @@
+import { USERS_NOT_FOUND, USER_NOT_FOUND } from '@config/constants';
+import { NotFoundException } from '@nestjs/common';
 import { UserSex } from '@common/types/user.types';
 import { IUserRepository } from '@domain/app/user/interface/user-repo.interface';
 import { EntityRepository, Repository } from 'typeorm';
@@ -11,10 +13,10 @@ export class UserRepository
 {
   private allRelations = [
     'topics',
-    'tokens',
+    'token',
     'roles',
     'filter',
-    'elites',
+    'elite',
     'blacklist',
   ];
 
@@ -24,7 +26,13 @@ export class UserRepository
   }
 
   async updateProfile(id: number, data: Partial<UserType>): Promise<User> {
-    const user = await this.findOneOrFail(id);
+    let user: User;
+
+    try {
+      user = await this.findOneOrFail(id);
+    } catch (error) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
 
     await Object.keys(data).forEach((key: any) => {
       if (data[key]) user[key] = data[key];
@@ -34,58 +42,116 @@ export class UserRepository
   }
 
   async changePassword(id: number, password: string): Promise<User> {
-    const user = await this.findOneOrFail(id);
+    let user: User;
+    try {
+      user = await this.findOneOrFail(id);
+    } catch (error) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
+
     user.password = password;
 
     return this.save(user);
   }
 
-  async changeRating(userId: number, rating: number): Promise<User> {
-    const user = await this.findOneOrFail(userId);
+  async changeRating(id: number, rating: number): Promise<User> {
+    let user: User;
+    try {
+      user = await this.findOneOrFail(id);
+    } catch (error) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
     user.rating = rating;
     return this.save(user);
   }
 
   async findAll(relations?: string[]): Promise<User[]> {
-    return this.find({ relations: relations ?? this.allRelations });
+    const users = await this.find({
+      relations: relations ?? this.allRelations,
+    });
+    if (users.length === 0) throw new NotFoundException(USERS_NOT_FOUND);
+
+    return users;
   }
 
   async findById(id: number, relations?: string[]): Promise<User> {
-    return this.findOneOrFail(id, {
-      relations: relations ?? this.allRelations,
-    });
+    let user: User;
+    try {
+      user = await this.findOneOrFail(id, {
+        relations: relations ?? this.allRelations,
+      });
+    } catch (e) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
+
+    return user;
   }
 
   async findByName(name: string, relations?: string[]): Promise<User> {
-    return this.findOneOrFail({
-      where: { name },
-      relations: relations ?? this.allRelations,
-    });
+    let user: User;
+    try {
+      user = await this.findOneOrFail({
+        where: { name },
+        relations: relations ?? this.allRelations,
+      });
+    } catch (e) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
+
+    return user;
   }
 
-  async findByEmail(email: string, relations?: string[]) {
-    return this.findOneOrFail({
-      where: { email },
-      relations: relations ?? this.allRelations,
-    });
+  async findByEmail(email: string, relations?: string[]): Promise<User> {
+    let user: User;
+    try {
+      user = await this.findOneOrFail({
+        where: { email },
+        relations: relations ?? this.allRelations,
+      });
+    } catch (e) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
+
+    return user;
   }
 
   async findByToken(token: string, relations?: string[]) {
-    return this.findOneOrFail({
-      where: { token },
-      relations: relations ?? this.allRelations,
-    });
+    let user: User;
+    try {
+      user = await this.findOneOrFail({
+        where: { token },
+        relations: relations ?? this.allRelations,
+      });
+    } catch (e) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
+
+    return user;
   }
 
   async findByField(field: keyof User, value: any, relations?: string[]) {
-    return this.findOneOrFail({
-      where: { [field]: value },
-      relations: relations ?? this.allRelations,
-    });
+    let user: User;
+    try {
+      user = await this.findOneOrFail({
+        where: { [field]: value },
+        relations: relations ?? this.allRelations,
+      });
+    } catch (e) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
+
+    return user;
   }
 
   async getAttributes(attributes: (keyof User)[], id: number): Promise<User> {
-    return this.findOneOrFail(id, { select: attributes });
+    let user: User;
+    try {
+      user = await this.findOneOrFail(id, { select: attributes });
+    } catch (e) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
+
+    return user;
   }
 
   async getCountSex(sex: UserSex): Promise<[User[], number]> {

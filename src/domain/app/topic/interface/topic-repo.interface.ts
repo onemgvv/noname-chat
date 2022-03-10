@@ -1,7 +1,8 @@
 import { Topic as TopicType } from '@domain/app/topic/topic.type';
 import { Topic } from '@persistence/app/topic/topic.entity';
+import { Repository } from 'typeorm';
 
-export interface ITopicRepository {
+export interface ITopicRepository extends Repository<Topic> {
   newTopic(data: Partial<TopicType>): Promise<Topic>;
   receiveAll(relations?: string[]): Promise<Topic[]>;
   findById(id: number, relations?: string[]): Promise<Topic>;

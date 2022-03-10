@@ -18,6 +18,12 @@ import { Elite } from './app/elite/elite.entity';
 import { Filter } from './app/filter/filter.entity';
 import { Dialog } from './chat/dialog/dialog.entity';
 import { Message } from './chat/message/message.entity';
+import { BotModule } from './admin/bot/bot.module';
+import { CityModule } from './admin/city/city.module';
+import { ComplaintModule } from './admin/complaint/complaint.module';
+import { PaymentModule } from './admin/payment/payment.module';
+import { TariffModule } from './admin/tariff/tariff.module';
+import { StoryModule } from './admin/story/story.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -38,6 +44,12 @@ import { Message } from './chat/message/message.entity';
     DialogRepositoryModule,
     MessageRepositoryModule,
     BlacklistRepositoryModule,
+    BotModule,
+    CityModule,
+    ComplaintModule,
+    PaymentModule,
+    TariffModule,
+    StoryModule,
   ],
   exports: [
     TypeOrmModule,

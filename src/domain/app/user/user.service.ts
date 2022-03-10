@@ -26,9 +26,9 @@ const BlacklistRepo = () => Inject(BLACKLIST_REPO);
 @Injectable()
 export class UserServiceImpl implements IUserService {
   constructor(
-    @UserRepo() private readonly userRepository: IUserRepository,
-    @RoleRepo() private readonly roleRepository: IRoleRepository,
-    @BlacklistRepo() private readonly blacklistRepository: IBlacklistRepository,
+    @UserRepo() private userRepository: IUserRepository,
+    @RoleRepo() private roleRepository: IRoleRepository,
+    @BlacklistRepo() private blacklistRepository: IBlacklistRepository,
   ) {}
 
   async create(data: Partial<UserType>): Promise<User> {

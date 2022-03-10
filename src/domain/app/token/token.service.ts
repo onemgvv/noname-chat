@@ -1,7 +1,7 @@
 import { ITokenRepository } from '@domain/app/token/interface/token-repo.interface';
 import { Token } from '@persistence/app/token/token.entity';
 import { ICreateToken } from './interface/create.interface';
-import { IToken } from '../../../auth/interface/token.interface';
+import { IToken } from '@auth/interface/token.interface';
 import { User } from '@persistence/app/user/user.entity';
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
