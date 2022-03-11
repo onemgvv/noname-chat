@@ -1,10 +1,11 @@
 import { FILTER_NOT_FOUND } from './../../../common/config/constants';
-import { NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Filter as FilterType } from '@domain/app/filter/filter.type';
 import { EntityRepository, Repository } from 'typeorm';
 import { Filter } from '@persistence/app/filter/filter.entity';
 import { IFilterRepository } from '@domain/app/filter/interface/filter-repo.interface';
 
+@Injectable()
 @EntityRepository(Filter)
 export class FilterRepository
   extends Repository<Filter>

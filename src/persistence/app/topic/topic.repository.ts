@@ -1,7 +1,4 @@
-import {
-  TOPIC_NOT_FOUND,
-  TOPICS_NOT_FOUND,
-} from './../../../common/config/constants';
+import { TOPIC_NOT_FOUND, TOPICS_NOT_FOUND } from '@common/config/constants';
 import { Topic as TopicType } from '@domain/app/topic/topic.type';
 import { Topic } from '@persistence/app/topic/topic.entity';
 import { EntityRepository, Repository } from 'typeorm';

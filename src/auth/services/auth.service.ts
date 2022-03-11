@@ -66,7 +66,7 @@ export class AuthService implements IAuthService {
    *
    */
   async login(userDto: LoginUserDto): Promise<ILogin> {
-    const candidate = await this.userService.findUser('email', userDto.email);
+    const candidate = await this.userService.checkExist(userDto.email);
     if (!candidate) {
       throw new BadRequestException('Пользователь с таким email не найден!');
     }
@@ -100,7 +100,7 @@ export class AuthService implements IAuthService {
    * @returns ILogin
    */
   async register(userDto: CreateUserDto): Promise<ILogin> {
-    const candidate = await this.userService.findUser('email', userDto.email);
+    const candidate = await this.userService.checkExist(userDto.email);
     if (candidate)
       throw new BadRequestException(
         'Пользователь с таким Email уже существует',
@@ -131,7 +131,7 @@ export class AuthService implements IAuthService {
    * @returns ILogin
    */
   async fastRegister(email: string): Promise<ILogin> {
-    const candidate = await this.userService.findUser('email', email);
+    const candidate = await this.userService.checkExist(email);
     if (candidate) {
       throw new BadRequestException(
         'Пользователь с таким Email уже существует',
@@ -166,10 +166,7 @@ export class AuthService implements IAuthService {
     socialId: SocialIds,
   ): Promise<ILogin> {
     let user: User = await this.userService.getBySocials(socialId, payload.sub);
-    const userByEmail: User = await this.userService.findUser(
-      'email',
-      payload.email,
-    );
+    const userByEmail: User = await this.userService.checkExist(payload.email);
 
     if (!user && !userByEmail) {
       const password: string = await Helper.generatePassword(10, true);
@@ -214,7 +211,7 @@ export class AuthService implements IAuthService {
   async refreshPassword(
     email: string,
   ): Promise<{ status: number; message: string }> {
-    const user: User = await this.userService.findUser('email', email);
+    const user: User = await this.userService.checkExist(email);
     if (!user) throw new NotFoundException('Пользователь не найден!');
 
     const code = await Helper.generateRefreshCode();

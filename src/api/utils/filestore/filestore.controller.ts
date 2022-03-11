@@ -1,6 +1,6 @@
 import { Folder } from '@common/types/app.types';
 import { FILESTORE_SERVICE } from '@config/constants';
-import { IFilestoreService } from '@domain/common/filestore/interface/filestore.interface';
+import { IFilestoreService } from '@utils/filestore/interface/filestore.interface';
 import {
   Controller,
   Get,

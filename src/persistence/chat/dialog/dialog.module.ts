@@ -16,6 +16,6 @@ import { DialogRepository } from './dialog.repository';
     MessageRepositoryModule,
   ],
   providers: [DialogRepoProvider],
-  exports: [DialogRepoProvider, TypeOrmModule],
+  exports: [DialogRepoProvider],
 })
 export class DialogRepositoryModule {}

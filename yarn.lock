@@ -1050,6 +1050,14 @@
   dependencies:
     "@types/express" "*"
 
+"@types/node-fetch@^2.5.12":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.6.1.tgz#8f127c50481db65886800ef496f20bbf15518975"
+  integrity sha512-oMqjURCaxoSIsHSr1E47QHzbmzNR5rK8McHuNb11BOM9cHcIK3Avy0s/b2JlXHoQGTYS3NsvWzV1M0iK7l0wbA==
+  dependencies:
+    "@types/node" "*"
+    form-data "^3.0.0"
+
 "@types/node@*":
   version "17.0.18"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.18.tgz#3b4fed5cfb58010e3a2be4b6e74615e4847f1074"
@@ -1059,6 +1067,16 @@
   version "16.11.25"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.25.tgz#bb812b58bacbd060ce85921250d8b4ca553cd4a2"
   integrity sha512-NrTwfD7L1RTc2qrHQD4RTTy4p0CO2LatKBEKEds3CaVuhoM/+DJzmWZl5f+ikR8cm8F5mfJxK+9rQq07gRiSjQ==
+
+"@types/node@^16.4.6":
+  version "16.11.26"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.26.tgz#63d204d136c9916fb4dcd1b50f9740fe86884e47"
+  integrity sha512-GZ7bu5A6+4DtG7q9GsoHXy3ALcgeIHP4NnL0Vv2wu0uUB/yQex26v0tf6/na1mm0+bS9Uw+0DFex7aaKr2qawQ==
+
+"@types/object-hash@^2.1.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@types/object-hash/-/object-hash-2.2.1.tgz#67c169f8f033e0b62abbf81df2d00f4598d540b9"
+  integrity sha512-i/rtaJFCsPljrZvP/akBqEwUP2y5cZLOmvO+JaYnz01aPknrQ+hB5MRcO7iqCUsFaYfTG8kGfKUyboA07xeDHQ==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -1075,7 +1093,7 @@
   resolved "https://registry.yarnpkg.com/@types/pug/-/pug-2.0.5.tgz#69bc700934dd473c7ab97270bd2dbacefe562231"
   integrity sha512-LOnASQoeNZMkzexRuyqcBBDZ6rS+rQxUMkmj5A0PkhhiSZivLIuz6Hxyr1mkGoEZEkk66faROmpMi4fFkrKsBA==
 
-"@types/qs@*":
+"@types/qs@*", "@types/qs@^6.9.7":
   version "6.9.7"
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.7.tgz#63bb7d067db107cc1e457c303bc25d511febf6cb"
   integrity sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==
@@ -2028,6 +2046,19 @@ clone@^1.0.2:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
   integrity sha1-2jCcwmPfFZlMaIypAheco8fNfH4=
+
+cloudpayments@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/cloudpayments/-/cloudpayments-6.0.1.tgz#7859ce1c26f5b7794ef7b441cb1fa9bec7a05138"
+  integrity sha512-JxYTw8mY+K7i1a9s6T1E1Z7SglghRP2up3XDG5pwW3nQtvSekZbljEvqyDRIZSz2NSXoeRd//Zrd+b0xu22ogQ==
+  dependencies:
+    "@types/node" "^16.4.6"
+    "@types/node-fetch" "^2.5.12"
+    "@types/object-hash" "^2.1.1"
+    "@types/qs" "^6.9.7"
+    node-fetch "^2.6.0"
+    object-hash "^2.2.0"
+    qs "^6.10.1"
 
 co@^4.6.0:
   version "4.6.0"
@@ -5103,7 +5134,7 @@ node-exceptions@^4.0.1:
   resolved "https://registry.yarnpkg.com/node-exceptions/-/node-exceptions-4.0.1.tgz#70425d17a245c3c00709c72f57c4c20b39ef1a4c"
   integrity sha512-KJI+FawYOv74x60H6+zrBPfO2vvp9m0pHZi6SH8BBBuc67Irv11DsqY4Le4EBFq1/T5aXFU3hkLrMgtW7RNXxA==
 
-node-fetch@^2.6.1, node-fetch@^2.6.5:
+node-fetch@^2.6.0, node-fetch@^2.6.1, node-fetch@^2.6.5:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
@@ -5188,7 +5219,7 @@ object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.1:
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
 
-object-hash@2.2.0:
+object-hash@2.2.0, object-hash@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-2.2.0.tgz#5ad518581eefc443bd763472b8ff2e9c2c0d54a5"
   integrity sha512-gScRMn0bS5fH+IuwyIFgnh9zBdo4DV+6GhygmWM9HyNJSgS0hScp1f5vjtm7oIIOiT9trXrShAkLFSc2IqKNgw==

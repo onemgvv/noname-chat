@@ -24,7 +24,6 @@ import {
 } from '@nestjs/common';
 import CreateFilterDto from './dto/create.dto';
 import UpdateFilterDto from './dto/update.dto';
-import { Filter } from '@persistence/app/filter/filter.entity';
 
 // TODO: CheckPremiumInterceptor create
 
@@ -89,9 +88,7 @@ export class FilterController {
   // @UseInterceptors(CheckPremiumInterceptor)
   async delete(@Body('userId') userId: number) {
     const user = await this.userService.findUser('id', userId);
-    if (!user) throw new NotFoundException('Пользователь не найден!');
-    const result: Filter = await this.filterService.deleteByUser(user.id);
-    if (!result) throw new NotFoundException('У пользователя нет фильтра');
+    await this.filterService.deleteByUser(user.id);
 
     return { status: HttpStatus.OK, message: 'Фильтр очищен!' };
   }

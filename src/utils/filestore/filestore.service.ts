@@ -1,4 +1,4 @@
-import { IFilestoreService } from '@domain/common/filestore/interface/filestore.interface';
+import { IFilestoreService } from '@utils/filestore/interface/filestore.interface';
 import * as fs from 'fs';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { StorageService } from '@codebrew/nestjs-storage';

@@ -1,40 +1,63 @@
-import { UpdateBotDto } from '@api/admin/bot/dto/update.dto';
+import { UpdateBotDto } from '@api/admin/bot/dto/update-bot.dto';
 import { EntityRepository, Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Bot } from './bot.entity';
-import { Helper } from '@utils/app.helper';
-import { CreateBotDto } from '@api/admin/bot/dto/create.dto';
+import { CreateBotDto } from '@api/admin/bot/dto/create-bot.dto';
 import { IBotRepository } from '@domain/admin/bot/interface/bot-repo.interface';
+import {
+  BOTS_NOT_FOUND,
+  ACTIVE_BOTS_NOT_FOUND,
+  BOT_NOT_FOUND,
+} from '@config/constants';
 
 @Injectable()
 @EntityRepository(Bot)
 export class BotRepository extends Repository<Bot> implements IBotRepository {
-  private relations: string[] = ['bot_messages'];
+  private relations: string[] = ['messages'];
 
   newBot = async (data: CreateBotDto): Promise<Bot> => {
-    const photo = Helper.getRandomBotAvatar();
     const bot = await this.create({
       ...data,
-      photo,
       active: data.active ?? false,
     });
     return this.save(bot);
   };
 
-  receive = (): Promise<Bot[]> => {
-    return this.find({ relations: this.relations });
+  receive = async (): Promise<Bot[]> => {
+    const bots = await this.find({ relations: this.relations });
+    if (bots.length === 0) throw new NotFoundException(BOTS_NOT_FOUND);
+
+    return bots;
   };
 
-  findActive = (): Promise<Bot[]> => {
-    return this.find({ where: { active: true }, relations: this.relations });
+  findActive = async (): Promise<Bot[]> => {
+    const bots = await this.find({
+      where: { active: true },
+      relations: this.relations,
+    });
+    if (bots.length === 0) throw new NotFoundException(ACTIVE_BOTS_NOT_FOUND);
+
+    return bots;
   };
 
-  getById = (id: number): Promise<Bot> => {
-    return this.findOne(id, { relations: this.relations });
+  getById = async (id: number): Promise<Bot> => {
+    let bot: Bot;
+    try {
+      bot = await this.findOneOrFail(id, { relations: this.relations });
+    } catch (error) {
+      throw new NotFoundException(BOT_NOT_FOUND);
+    }
+
+    return bot;
   };
 
   editBot = async (id: number, data: UpdateBotDto): Promise<Bot> => {
-    const bot = await this.findOne(id);
+    let bot: Bot;
+    try {
+      bot = await this.findOneOrFail(id);
+    } catch (error) {
+      throw new NotFoundException(BOT_NOT_FOUND);
+    }
 
     Object.keys(data).forEach((key) => {
       if (data[key]) bot[key] = data[key];
@@ -44,12 +67,18 @@ export class BotRepository extends Repository<Bot> implements IBotRepository {
   };
 
   deleteOne = async (id: number): Promise<Bot> => {
-    const bot = await this.findOne(id);
+    let bot: Bot;
+    try {
+      bot = await this.findOneOrFail(id, { relations: this.relations });
+    } catch (error) {
+      throw new NotFoundException(BOT_NOT_FOUND);
+    }
     return this.remove(bot);
   };
 
   clearAll = async (): Promise<Bot[]> => {
     const bots = await this.find();
+    if (bots.length === 0) throw new NotFoundException(BOTS_NOT_FOUND);
     return this.remove(bots);
   };
 }

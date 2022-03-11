@@ -8,9 +8,13 @@ import { SocialIds } from '@common/types/app.types';
 import { UserRoles, UserSex } from '@common/types/user.types';
 import {
   BLACKLIST_REPO,
+  EMPTY_BLACKLIST,
   ROLE_REPO,
   USER_NOT_FOUND,
   USER_REPO,
+  ROLE_NOT_FOUND,
+  USERS_NOT_FOUND,
+  CITY_REPO,
 } from '@config/constants';
 import { Helper } from '@utils/app.helper';
 import { IBlacklistRepository } from './interface/blacklist-repo.interface';
@@ -18,9 +22,13 @@ import { NewBlockInterface } from './interface/new-block.interface';
 import { Role } from '@persistence/app/role/role.entity';
 import { RolesList } from '@enums/roles.enum';
 import { IRoleRepository } from './interface/role-repo.interface';
+import { IFindCity } from '@domain/admin/city/interface/find.interface';
+import { City } from '@persistence/admin/city/city.entity';
+import { ICityRepository } from '@domain/admin/city/interface/city-repo.interface';
 
 const UserRepo = () => Inject(USER_REPO);
 const RoleRepo = () => Inject(ROLE_REPO);
+const CityRepo = () => Inject(CITY_REPO);
 const BlacklistRepo = () => Inject(BLACKLIST_REPO);
 
 @Injectable()
@@ -28,7 +36,9 @@ export class UserServiceImpl implements IUserService {
   constructor(
     @UserRepo() private userRepository: IUserRepository,
     @RoleRepo() private roleRepository: IRoleRepository,
-    @BlacklistRepo() private blacklistRepository: IBlacklistRepository,
+    @CityRepo() private cityRepository: ICityRepository,
+    @BlacklistRepo()
+    private blacklistRepository: IBlacklistRepository,
   ) {}
 
   async create(data: Partial<UserType>): Promise<User> {
@@ -38,55 +48,95 @@ export class UserServiceImpl implements IUserService {
 
   async setRole(userId: number, role: UserRoles): Promise<User> {
     const user = await this.userRepository.findById(userId);
+    if (!user) throw new NotFoundException(USER_NOT_FOUND);
+
     const uRole = await this.roleRepository.getByName(role);
+    if (!uRole) throw new NotFoundException(ROLE_NOT_FOUND);
+
     user.roles.push(uRole);
     return this.userRepository.updateProfile(userId, { roles: user.roles });
   }
 
   async deleteRole(userId: number, role: UserRoles): Promise<User> {
     const user = await this.userRepository.findById(userId);
-    user.roles = user.roles.filter((r: Role) => r.name !== role);
+    if (!user) throw new NotFoundException(USER_NOT_FOUND);
+
+    const fRole = await this.roleRepository.getByName(role);
+    if (!fRole) throw new NotFoundException(ROLE_NOT_FOUND);
+
+    user.roles = user.roles.filter((r: Role) => r.name !== fRole.name);
     return this.userRepository.updateProfile(userId, { roles: user.roles });
   }
 
   async givePremium(userId: number, expiresIn: number): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) throw new NotFoundException(USER_NOT_FOUND);
+
     const expiresDate = Helper.calculateDate(expiresIn);
-    return this.userRepository.updateProfile(userId, { premium: expiresDate });
+    user.premium = expiresDate;
+    return user.save();
   }
 
   async removePremium(userId: number): Promise<User> {
     const user = await this.userRepository.findById(userId);
-    user.roles = user.roles.filter(
-      (role: Role) => role.name !== RolesList.PREMIUM,
-    );
+    if (!user) throw new NotFoundException(USER_NOT_FOUND);
+
     return this.userRepository.updateProfile(userId, {
       premium: null,
-      roles: user.roles,
     });
   }
 
   async findUser(field: keyof User, value: any): Promise<User> {
-    return this.userRepository.findByField(field, value);
+    const user = await this.userRepository.findByField(field, value);
+    if (!user) throw new NotFoundException(USER_NOT_FOUND);
+
+    return user;
+  }
+
+  async checkExist(email: string): Promise<User> {
+    return this.userRepository.findOne({ where: { email } });
   }
 
   async getBySocials(fieldId: SocialIds, userId: string): Promise<User> {
     return this.userRepository.findByField(fieldId, userId);
   }
 
-  async update(userId: number, data: Partial<UserType>): Promise<User> {
-    if (data.password) {
-      this.userRepository.changePassword(userId, data.password);
-    }
+  async changePassword(id: number, password: string): Promise<User> {
+    const user = await this.userRepository.findById(id);
+    if (!user) throw new NotFoundException(USER_NOT_FOUND);
 
-    return this.userRepository.findById(userId);
+    user.password = password;
+    return user.save();
+  }
+
+  async changeRating(id: number, rating: number): Promise<User> {
+    const user = await this.userRepository.findById(id);
+    if (!user) throw new NotFoundException(USER_NOT_FOUND);
+
+    user.rating = rating;
+    return user.save();
+  }
+
+  async update(userId: number, data: Partial<UserType>): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) throw new NotFoundException(USER_NOT_FOUND);
+
+    return this.userRepository.updateProfile(userId, data);
   }
 
   async receiveUser(relations?: string[]): Promise<User[]> {
-    return this.userRepository.findAll(relations);
+    const users = await this.userRepository.findAll(relations);
+    if (users.length === 0) throw new NotFoundException(USERS_NOT_FOUND);
+
+    return users;
   }
 
   async getBlacklist(ownerId: number): Promise<NewBlockInterface[]> {
     const user = await this.userRepository.findById(ownerId);
+    if (!user) throw new NotFoundException(USER_NOT_FOUND);
+
+    if (user.blacklist.length === 0)
+      throw new NotFoundException(EMPTY_BLACKLIST);
 
     return Promise.all(
       user.blacklist.map(async (block: Blacklist) => {
@@ -110,6 +160,7 @@ export class UserServiceImpl implements IUserService {
       userId,
     );
     if (!target) throw new NotFoundException(USER_NOT_FOUND);
+
     const newBlock = await this.blacklistRepository.newBlacklist({
       ownerId,
       userId,
@@ -149,6 +200,13 @@ export class UserServiceImpl implements IUserService {
     return this.userRepository.updateProfile(user.id, { ban: null });
   }
 
+  async deleteAccount(userId: number): Promise<User> {
+    const account = await this.userRepository.findById(userId);
+    return this.userRepository.deleteOne(account);
+  }
+
+  // TODO: move it in utils
+
   async getCountSex(sex: UserSex): Promise<number> {
     const result = await this.userRepository.getCountSex(sex);
     return result[1];
@@ -179,19 +237,17 @@ export class UserServiceImpl implements IUserService {
     return groups;
   }
 
-  // async getGeoraphic() {
-  //   const cities: FindCityDto[] = await this.citiesService.findAll();
-  //   const users: User[] = await this.userRepository.findAll();
-  //   const data = [];
+  async getGeoraphic() {
+    const cities: IFindCity[] = await this.cityRepository.find();
+    const users: User[] = await this.userRepository.findAll();
+    const data = [];
 
-  //   await cities.map(async (city: Cities) => {
-  //     console.log(city.name);
-  //     const cityUsers = users.filter((user: User) => user.city === city.name);
-  //     data.push({ name: city.name, count: cityUsers.length });
-  //   });
+    await cities.map(async (city: City) => {
+      console.log(city.name);
+      const cityUsers = users.filter((user: User) => user.city === city.name);
+      data.push({ name: city.name, count: cityUsers.length });
+    });
 
-  //   console.log(data);
-
-  //   return data;
-  // }
+    return data;
+  }
 }

@@ -1,10 +1,11 @@
-import { NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository, EntityRepository } from 'typeorm';
 import { Message } from '@persistence/chat/message/message.entity';
 import { IMessageRepository } from '@domain/chat/message/interface/message-repo.interface';
 import { Message as MessageType } from '@domain/chat/message/message.type';
 import { DIALOG_HAVENT_MESSAGES, MESSAGES_NOT_FOUND } from '@config/constants';
 
+@Injectable()
 @EntityRepository(Message)
 export class MessageRepository
   extends Repository<Message>

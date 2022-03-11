@@ -36,7 +36,7 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', nullable: true })
   photo: string;
 
-  @Column('date')
+  @Column({ type: 'date', nullable: true })
   premium: Date;
 
   @Column('varchar')
@@ -75,7 +75,7 @@ export class User extends BaseEntity {
   })
   roles: Role[];
 
-  @OneToOne(() => Filter)
+  @OneToOne(() => Filter, (filter) => filter.user)
   @JoinColumn()
   filter: Filter;
 

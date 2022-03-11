@@ -1,4 +1,4 @@
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, Injectable } from '@nestjs/common';
 import { Elite as EliteType } from '@domain/app/elite/elite.type';
 import { EntityRepository, Repository } from 'typeorm';
 import { Elite } from '@persistence/app/elite/elite.entity';
@@ -9,6 +9,7 @@ import {
   ELITE_NOT_FOUND,
 } from '@config/constants';
 
+@Injectable()
 @EntityRepository(Elite)
 export class EliteRepository
   extends Repository<Elite>

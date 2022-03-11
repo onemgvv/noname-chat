@@ -1,8 +1,8 @@
 import {
   ACCESS_TOKEN_IS_NOT_SET,
   REFRESH_TOKEN_IS_NOT_SET,
+  TOKEN_SERVICE,
 } from '@config/constants';
-import { TokenService } from '@domain/app/token/token.service';
 import {
   ACCESS_TOKEN_NAME,
   REFRESH_TOKEN_NAME,
@@ -10,6 +10,7 @@ import {
 } from '@config/constants';
 import {
   ExecutionContext,
+  Inject,
   Injectable,
   Logger,
   UnauthorizedException,
@@ -17,6 +18,9 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
+import { ITokenService } from '@domain/app/token/interface/token-service.interface';
+
+const TokenService = () => Inject(TOKEN_SERVICE);
 
 export const cookieExtractor = (req: Request): string | null => {
   if (req && req.cookies) {
@@ -30,7 +34,7 @@ export const cookieExtractor = (req: Request): string | null => {
 export class CustomAuthGuard extends AuthGuard('jwt') {
   private logger = new Logger(CustomAuthGuard.name);
 
-  constructor(private readonly tokenService: TokenService) {
+  constructor(@TokenService() private tokenService: ITokenService) {
     super();
   }
 

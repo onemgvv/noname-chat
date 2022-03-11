@@ -2,7 +2,7 @@ import {
   DIALOG_NOT_FOUND,
   USER_HAVENT_DIALOGS,
 } from '@common/config/constants';
-import { NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { IFindDialog } from './interface/find.interface';
 import { EntityRepository, Repository } from 'typeorm';
 import { Dialog } from '@persistence/chat/dialog/dialog.entity';
@@ -10,6 +10,7 @@ import { Dialog as DialogType } from '@domain/chat/dialog/dialog.type';
 import { IDialogRepository } from '@domain/chat/dialog/interface/dialog-repo.interface';
 import { Helper } from '@utils/app.helper';
 
+@Injectable()
 @EntityRepository(Dialog)
 export class DialogRepository
   extends Repository<Dialog>

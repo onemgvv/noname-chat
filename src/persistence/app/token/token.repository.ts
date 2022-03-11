@@ -1,15 +1,16 @@
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, Injectable } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { Token } from '@persistence/app/token/token.entity';
 import { ITokenRepository } from '@domain/app/token/interface/token-repo.interface';
 import { TOKENS_NOT_FOUND, TOKEN_NOT_FOUND } from '@config/constants';
 
+@Injectable()
 @EntityRepository(Token)
 export class TokenRepository
   extends Repository<Token>
   implements ITokenRepository
 {
-  private allRelations = ['users'];
+  private allRelations = ['user'];
 
   async newToken(userId: number, refreshToken: string): Promise<Token> {
     const token = await this.findOne({ where: { userId } });
@@ -24,16 +25,10 @@ export class TokenRepository
   }
 
   async findByUserId(userId: number, relations?: string[]): Promise<Token> {
-    let token: Token;
-    try {
-      token = await this.findOneOrFail({
-        where: { userId },
-        relations: relations ?? this.allRelations,
-      });
-    } catch (error) {
-      throw new NotFoundException(TOKEN_NOT_FOUND);
-    }
-    return token;
+    return this.findOne({
+      where: { userId },
+      relations: relations ?? this.allRelations,
+    });
   }
 
   async receiveAll(token: string, relations?: string[]): Promise<Token[]> {

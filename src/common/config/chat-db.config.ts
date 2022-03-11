@@ -15,10 +15,10 @@ export class PostgresConfig {
       username: configService.get('CHAT_DB_USERNAME'),
       password: configService.get('CHAT_DB_PASSWORD'),
       entities: [process.cwd() + '/dist/persistence/chat/**/*.entity{.js,.ts}'],
-      synchronize: true,
-      migrations: [process.cwd() + '/src/database/migrations/*.js'],
+      migrationsTableName: 'migrations',
+      migrations: [process.cwd() + '/src/database/migrations/chat/*{.js,.ts}'],
       cli: {
-        migrationsDir: process.cwd() + 'src/database/migrations',
+        migrationsDir: process.cwd() + '/src/database/migrations/chat',
       },
     };
   }

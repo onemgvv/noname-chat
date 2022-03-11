@@ -17,10 +17,10 @@ export class PostgresConfig {
       entities: [
         process.cwd() + '/dist/persistence/admin/**/*.entity{.js,.ts}',
       ],
-      synchronize: true,
-      migrations: [process.cwd() + '/src/database/migrations/*.js'],
+      migrationsTableName: 'migrations',
+      migrations: [process.cwd() + '/src/database/migrations/admin/*{.js,.ts}'],
       cli: {
-        migrationsDir: process.cwd() + 'src/database/migrations',
+        migrationsDir: process.cwd() + '/src/database/migrations/admin',
       },
     };
   }

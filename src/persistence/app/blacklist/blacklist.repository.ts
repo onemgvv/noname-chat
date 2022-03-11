@@ -1,10 +1,11 @@
-import { NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { IBlacklistRepository } from '@domain/app/user/interface/blacklist-repo.interface';
 import { EntityRepository, Repository } from 'typeorm';
 import { Blacklist } from '@persistence/app/blacklist/blacklist.entity';
 import { ICreateBlacklist } from './interface/create.interface';
 import { EMPTY_BLACKLIST, USER_IS_NOT_BLOCKED } from '@config/constants';
 
+@Injectable()
 @EntityRepository(Blacklist)
 export class BlacklistRepository
   extends Repository<Blacklist>

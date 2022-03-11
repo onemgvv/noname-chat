@@ -32,8 +32,6 @@ export class TokenService implements ITokenService {
       email: user.email,
     };
 
-    // this.tokenRepository.
-
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.PRIVATE_KEY,
       expiresIn: '24h',

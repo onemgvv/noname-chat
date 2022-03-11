@@ -10,4 +10,4 @@ import { BotRepository } from './bot.repository';
   providers: [BotRepoProvider],
   exports: [BotRepoProvider],
 })
-export class BotModule {}
+export class BotRepositoryModule {}

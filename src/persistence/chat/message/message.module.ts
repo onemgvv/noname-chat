@@ -10,6 +10,6 @@ import { MessageRepository } from './message.repository';
     TypeOrmModule.forFeature([Message, MessageRepository], CHAT_CONNECTION),
   ],
   providers: [MessageRepoProvider],
-  exports: [MessageRepoProvider, TypeOrmModule],
+  exports: [MessageRepoProvider],
 })
 export class MessageRepositoryModule {}

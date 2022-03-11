@@ -1,3 +1,4 @@
+import { CityRepositoryModule } from './../../../persistence/admin/city/city.module';
 import { BlacklistRepositoryModule } from '@persistence/app/blacklist/blacklist.module';
 import { UserRepositoryModule } from '@persistence/app/user/user.module';
 import { Module } from '@nestjs/common';
@@ -8,6 +9,7 @@ import { RoleRepositoryModule } from '@persistence/app/role/role.module';
   imports: [
     UserRepositoryModule,
     RoleRepositoryModule,
+    CityRepositoryModule,
     BlacklistRepositoryModule,
   ],
   providers: [UserServiceProvider],
