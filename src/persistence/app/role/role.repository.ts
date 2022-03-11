@@ -27,14 +27,4 @@ export class RoleRepository
       relations: relations,
     });
   }
-
-  async deleteOne(id: number): Promise<Role> {
-    const role = await this.findOne(id);
-    return this.remove(role);
-  }
-
-  async deleteAll(): Promise<Role[]> {
-    const roles = await this.find();
-    return this.remove(roles);
-  }
 }

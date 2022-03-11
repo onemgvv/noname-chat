@@ -1,4 +1,4 @@
-import { COMPLAINT_REPO } from '@config/constants';
+import { COMPLAINT_SERVICE } from '@config/constants';
 import {
   Body,
   Controller,
@@ -19,7 +19,7 @@ import { RolesList } from '@enums/roles.enum';
 import { CreateComplaintsDto } from './dto/create.dto';
 import { IComplaintService } from '@domain/admin/complaint/interface/complaint-service.interface';
 
-const ComplaintService = () => Inject(COMPLAINT_REPO);
+const ComplaintService = () => Inject(COMPLAINT_SERVICE);
 
 @Controller('complaints')
 export class ComplaintsController {

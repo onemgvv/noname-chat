@@ -1,4 +1,4 @@
-import { CITY_REPO, COUNTRY_SERVICE } from '@config/constants';
+import { CITY_SERVICE, COUNTRY_SERVICE } from '@config/constants';
 import {
   Controller,
   Get,
@@ -26,7 +26,7 @@ import { RolesList } from '@enums/roles.enum';
 import { ICityService } from '@domain/admin/city/interface/city-service.interface';
 import { ICoutnryService } from '@domain/admin/country/interface/country-service.interface';
 
-const CityService = () => Inject(CITY_REPO);
+const CityService = () => Inject(CITY_SERVICE);
 const CountryService = () => Inject(COUNTRY_SERVICE);
 
 @Controller('cities')

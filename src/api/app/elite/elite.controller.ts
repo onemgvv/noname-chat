@@ -14,7 +14,6 @@ import {
   HttpCode,
   Inject,
   InternalServerErrorException,
-  NotFoundException,
   Param,
   Post,
   UseGuards,
@@ -57,23 +56,13 @@ export class EliteController {
   @Get()
   @HttpCode(200)
   async findAll() {
-    const elites = await this.eliteService.receive();
-    if (!elites)
-      throw new NotFoundException(
-        'В чате пока нет элитных пользователей, станьте первым!',
-      );
-
-    return elites;
+    return this.eliteService.receive();
   }
 
   @Get('count')
   @HttpCode(200)
   async countElites() {
     const elites = await this.eliteService.receive();
-    if (!elites)
-      throw new NotFoundException(
-        'В чате пока нет элитных пользователей, станьте первым!',
-      );
 
     return elites.length;
   }
@@ -83,10 +72,6 @@ export class EliteController {
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
   async clearAll() {
-    const elites = await this.eliteService.receive();
-    if (!elites)
-      throw new NotFoundException('В системе нет элитных пользователей!');
-
     return this.eliteService.clear();
   }
 
@@ -95,9 +80,7 @@ export class EliteController {
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
   async deleteByUserId(@Param('userId') userId: number) {
-    const elite = await this.eliteService.getByUser(userId);
-    if (!elite) throw new NotFoundException('Пользователь не из элит!');
-
+    await this.eliteService.getByUser(userId);
     return this.eliteService.deleteByUser(userId);
   }
 }

@@ -1,5 +1,5 @@
 import { ICityRepository } from './interface/city-repo.interface';
-import { CITY_REPO } from '@config/constants';
+import { CITIES_NOT_FOUND, CITY_NOT_FOUND, CITY_REPO, COUNTRY_HAVENT_CITIES } from '@config/constants';
 import { CreateCityDto } from '@api/admin/city/dto/create-city.dto';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ICityService } from './interface/city-service.interface';
@@ -21,28 +21,28 @@ export class CityServiceImpl implements ICityService {
     const city = await this.cityRepository.findOne(id, {
       relations: ['country'],
     });
-    if (!city) throw new NotFoundException('TODO: CITY_NOT_FOUND');
+    if (!city) throw new NotFoundException(CITY_NOT_FOUND);
 
     return city;
   }
 
   async update(id: number, data: UpdateCityDto): Promise<City> {
     const city = await this.cityRepository.findById(id);
-    if (!city) throw new NotFoundException('');
+    if (!city) throw new NotFoundException(CITY_NOT_FOUND);
 
     return this.cityRepository.edit(id, data);
   }
 
   async findByName(name: string): Promise<IFindCity> {
     const city = await this.cityRepository.findByName(name);
-    if (!city) throw new NotFoundException('');
+    if (!city) throw new NotFoundException(CITY_NOT_FOUND);
 
     return city;
   }
 
   async findByCountry(countryId: number): Promise<IFindCity[]> {
     const cities = await this.cityRepository.findByCountry(countryId);
-    if (cities.length === 0) throw new NotFoundException('');
+    if (cities.length === 0) throw new NotFoundException(COUNTRY_HAVENT_CITIES);
 
     return Promise.all(
       await cities.map((city: City) => {
@@ -57,7 +57,7 @@ export class CityServiceImpl implements ICityService {
 
   async deleteOne(id: number): Promise<City> {
     const city = await this.cityRepository.findOne(id);
-    if (!city) throw new NotFoundException();
+    if (!city) throw new NotFoundException(CITIES_NOT_FOUND);
 
     return this.cityRepository.remove(city);
   }

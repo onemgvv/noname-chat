@@ -45,6 +45,33 @@ export const ACTIVE_BOTS_NOT_FOUND = 'В системе нет активных 
 export const BOT_HAVENT_MESSAGES = 'У бота нет сообщений';
 export const BM_NOT_FOUND = 'Сообщение бота не найдено';
 
+export const CITY_NOT_FOUND = 'Город не найден';
+export const CITIES_NOT_FOUND = 'Города не найдены';
+export const COUNTRY_HAVENT_CITIES = 'В стране нет городов';
+
+export const COMPLAINT_NOT_FOUND = 'Жалоба не найдена';
+export const COMPLAINTS_NOT_FOUND = 'В системе нет жалоб';
+export const COMPLAINT_NF_OR_DECIDE = 'Жалоба не найдена или уже решена';
+export const ACATIVE_COMPLAINTS_NOT_FOUND = 'В системе нет активных жалоб';
+export const DECIDED_COMPLAINTS_NOT_FOUND = 'В системе нет закрытых жалоб';
+
+export const COUNTRY_NOT_FOUND = 'Страна не найдена';
+export const COUNTRIES_NOT_FOUND = 'В системе нет стран';
+
+export const PAYMENT_NOT_FOUND = 'В системе нет данных о платежах';
+export const PAYMENT_FOR_ACCID_NOT_FOUND = 'Нет данных о платежах по аккаунту';
+
+export const STORY_NOT_FOUND = 'Истроия не найдена';
+export const STORIES_NOT_FOUND = 'Истроий пока нет';
+export const STORY_ALREADY_PUBLISH = 'История уже опубликована';
+export const ACTIVE_STORY_HAVENT = 'Активных историй пока нет';
+export const ARCHIVE_STORY_HAVENT = 'Архивных историй пока нет';
+export const CONTENT_NOT_FOUND = 'Страница истории не найдена';
+
+export const TARIFF_NOT_FOUND = 'Тариф не найден';
+export const TARIFFS_NOT_FOUND = 'Тарифов в системе нет';
+export const ACTIVE_TARIFFS_NOT_EXIST = 'Активных тарифов в системе нет';
+
 export const UNAUTHORIZED_EXCEPTION = 'Unauthorized exception';
 
 // PROVIDERS
@@ -86,5 +113,4 @@ export const ELITE_SERVICE = 'EliteService';
 export const FILTER_SERVICE = 'FilterService';
 export const SOC_AUTH_SERVICE = 'SocAuthService';
 export const FILESTORE_SERVICE = 'FilestoreService';
-export const CHECK_PREMIUM = 'CheckPremium';
 export const CLOUDPAYMENTS_SERVICE = 'CloudPaymentsService';

@@ -1,3 +1,7 @@
+import {
+  PAYMENT_FOR_ACCID_NOT_FOUND,
+  PAYMENT_NOT_FOUND,
+} from '@common/config/constants';
 import { IPaymentRepository } from './interface/payment-repo.interface';
 import { PAYMENT_REPO } from '@config/constants';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
@@ -19,7 +23,7 @@ export class PaymentServiceImpl implements IPaymentService {
     const payment = await this.paymentRepository.findOne({
       where: { accountId },
     });
-    if (!payment) throw new NotFoundException('TODO: constants');
+    if (!payment) throw new NotFoundException(PAYMENT_FOR_ACCID_NOT_FOUND);
 
     return payment;
   }
@@ -32,6 +36,9 @@ export class PaymentServiceImpl implements IPaymentService {
   }
 
   async listPayments(): Promise<Payment[]> {
-    return this.paymentRepository.find();
+    const payments = await this.paymentRepository.find();
+    if (payments.length === 0) throw new NotFoundException(PAYMENT_NOT_FOUND);
+
+    return payments;
   }
 }

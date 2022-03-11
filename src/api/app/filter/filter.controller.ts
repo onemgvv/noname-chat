@@ -24,8 +24,7 @@ import {
 } from '@nestjs/common';
 import CreateFilterDto from './dto/create.dto';
 import UpdateFilterDto from './dto/update.dto';
-
-// TODO: CheckPremiumInterceptor create
+import { CheckPremiumInterceptor } from '@interceptors/premium.interceptor';
 
 const FilterService = () => Inject(FILTER_SERVICE);
 const UserService = () => Inject(USER_SERVICE);
@@ -41,7 +40,10 @@ export class FilterController {
   @HttpCode(HttpStatus.CREATED)
   @Roles(RolesList.PREMIUM)
   @UseGuards(CustomAuthGuard, RolesGuard)
-  @UseInterceptors(new TransformInterceptor(CreateFilterDto)) // CheckPremiumInterceptor
+  @UseInterceptors(
+    new TransformInterceptor(CreateFilterDto),
+    CheckPremiumInterceptor,
+  )
   async create(@Body() searchDto: CreateFilterDto) {
     const filter = await this.filterService.create(searchDto);
     if (!filter) throw new BadRequestException('Проверьте входные данные');
@@ -56,7 +58,7 @@ export class FilterController {
   @Get(':id')
   @UseGuards(CustomAuthGuard, RolesGuard)
   @Roles(RolesList.PREMIUM)
-  // @UseInterceptors(CheckPremiumInterceptor)
+  @UseInterceptors(CheckPremiumInterceptor)
   async getById(@Param('id') id: number) {
     const filter = await this.filterService.findByUserId(id);
     if (!filter) throw new NotFoundException('Фильтры не найдены');
@@ -71,7 +73,10 @@ export class FilterController {
   @Put(':id')
   @Roles(RolesList.PREMIUM)
   @UseGuards(CustomAuthGuard, RolesGuard)
-  @UseInterceptors(new TransformInterceptor(UpdateFilterDto)) // CheckPremiumInterceptor
+  @UseInterceptors(
+    new TransformInterceptor(UpdateFilterDto),
+    CheckPremiumInterceptor,
+  )
   async update(@Param('id') id: number, @Body() updateDto: UpdateFilterDto) {
     const newSearch = await this.filterService.update(id, updateDto);
 
@@ -85,7 +90,7 @@ export class FilterController {
   @Delete()
   @Roles(RolesList.PREMIUM)
   @UseGuards(CustomAuthGuard, RolesGuard)
-  // @UseInterceptors(CheckPremiumInterceptor)
+  @UseInterceptors(CheckPremiumInterceptor)
   async delete(@Body('userId') userId: number) {
     const user = await this.userService.findUser('id', userId);
     await this.filterService.deleteByUser(user.id);

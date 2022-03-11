@@ -1,7 +1,16 @@
 import { StoryContent } from '@persistence/admin/story-content/story-content.entity';
 import { CreateContentDto } from '@api/admin/story/dto/create-content.dto';
 import { CreateStoriesDto } from '@api/admin/story/dto/create-story.dto';
-import { STORY_SERVICE, STORY_CONTENT_REPO } from '@config/constants';
+import {
+  ACTIVE_STORY_HAVENT,
+  STORY_ALREADY_PUBLISH,
+  STORY_NOT_FOUND,
+  STORY_CONTENT_REPO,
+  STORY_REPO,
+  CONTENT_NOT_FOUND,
+  ARCHIVE_STORY_HAVENT,
+  STORIES_NOT_FOUND,
+} from '@config/constants';
 import {
   BadRequestException,
   Inject,
@@ -13,14 +22,14 @@ import { IStoryContentRepository } from './interface/sc-repositpry.interface';
 import { IStoryRepository } from './interface/story-repo.interface';
 import { IStoryService } from './interface/story-service.interface';
 
-const StoryService = () => Inject(STORY_SERVICE);
-const ContentService = () => Inject(STORY_CONTENT_REPO);
+const StoryRepo = () => Inject(STORY_REPO);
+const ContentRepo = () => Inject(STORY_CONTENT_REPO);
 
 @Injectable()
 export class StoryServiceImpl implements IStoryService {
   constructor(
-    @StoryService() private storyRepository: IStoryRepository,
-    @ContentService() private contentRepository: IStoryContentRepository,
+    @StoryRepo() private storyRepository: IStoryRepository,
+    @ContentRepo() private contentRepository: IStoryContentRepository,
   ) {}
 
   async create(storiesDto: CreateStoriesDto): Promise<Story> {
@@ -33,9 +42,9 @@ export class StoryServiceImpl implements IStoryService {
 
   async publishStorie(id: number): Promise<boolean> {
     const storie = await this.storyRepository.findOne(id);
-    if (!storie) throw new NotFoundException('Stories с данным id не найдена');
+    if (!storie) throw new NotFoundException(STORY_NOT_FOUND);
     if (storie.active === true)
-      throw new BadRequestException('Stories уже опубликована');
+      throw new BadRequestException(STORY_ALREADY_PUBLISH);
 
     storie.active = true;
     await storie.save();
@@ -51,7 +60,7 @@ export class StoryServiceImpl implements IStoryService {
       where: { active: true },
       relations: ['content'],
     });
-    if (!active) throw new NotFoundException('Активных stories пока нет');
+    if (!active) throw new NotFoundException(ACTIVE_STORY_HAVENT);
 
     return active;
   }
@@ -60,7 +69,7 @@ export class StoryServiceImpl implements IStoryService {
     const storie = await this.storyRepository.findOne(id, {
       relations: ['content'],
     });
-    if (!storie) throw new NotFoundException('Stories с данным id нет');
+    if (!storie) throw new NotFoundException(STORY_NOT_FOUND);
 
     return storie;
   }
@@ -70,7 +79,7 @@ export class StoryServiceImpl implements IStoryService {
       where: { active: false },
       relations: ['content'],
     });
-    if (!closed) throw new NotFoundException('Архивных stories пока нет');
+    if (!closed) throw new NotFoundException(ARCHIVE_STORY_HAVENT);
 
     return closed;
   }
@@ -79,17 +88,14 @@ export class StoryServiceImpl implements IStoryService {
     const stories = await this.storyRepository.find({
       relations: ['content'],
     });
-    if (!stories) throw new NotFoundException('Stories пока нет');
+    if (!stories) throw new NotFoundException(STORIES_NOT_FOUND);
 
     return stories;
   }
 
   async removeContent(id: number): Promise<StoryContent> {
     const content = await this.contentRepository.findOne(id);
-    if (!content)
-      throw new BadRequestException(
-        'Stories Content с данным id не существует',
-      );
+    if (!content) throw new BadRequestException(CONTENT_NOT_FOUND);
 
     return content.remove();
   }
@@ -100,8 +106,7 @@ export class StoryServiceImpl implements IStoryService {
 
   async deleteById(id: number): Promise<Story> {
     const story = await this.storyRepository.findOne(id);
-    if (!story)
-      throw new BadRequestException('Stories с данным id не существует');
+    if (!story) throw new BadRequestException(STORY_NOT_FOUND);
 
     return story.remove();
   }

@@ -20,7 +20,7 @@ export class TokenService implements ITokenService {
     @UserRepo() private readonly userRepository: IUserRepository,
   ) {}
 
-  async validateToken(token: string): Promise<User | boolean> {
+  async validateToken(token: string): Promise<User> {
     return (await this.jwtService.verify(token, {
       secret: process.env.PRIVATE_KEY,
     })) as User;

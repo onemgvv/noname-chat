@@ -1,5 +1,4 @@
-import { IFilestoreService } from '@utils/filestore/interface/filestore.interface';
-import { BOT_SERVICE, FILESTORE_SERVICE } from '@config/constants';
+import { BOT_SERVICE } from '@config/constants';
 import { IBotService } from '@domain/admin/bot/interface/bot-service.interface';
 import {
   Body,
@@ -24,14 +23,10 @@ import { CustomAuthGuard } from '@common/guards/custom-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
 
 const BotService = () => Inject(BOT_SERVICE);
-const FileService = () => Inject(FILESTORE_SERVICE);
 
 @Controller('admin/bot')
 export class BotController {
-  constructor(
-    @BotService() private readonly botService: IBotService,
-    @FileService() private readonly filestoreService: IFilestoreService,
-  ) {}
+  constructor(@BotService() private readonly botService: IBotService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

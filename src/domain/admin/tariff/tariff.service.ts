@@ -1,6 +1,11 @@
 import { CreateTariffDto } from '@api/admin/tariff/dto/create.dto';
 import { UpdateTariffDto } from '@api/admin/tariff/dto/update.dto';
-import { TARIFF_REPO } from '@config/constants';
+import {
+  ACTIVE_TARIFFS_NOT_EXIST,
+  TARIFFS_NOT_FOUND,
+  TARIFF_NOT_FOUND,
+  TARIFF_REPO,
+} from '@config/constants';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IFindTariff } from '@persistence/admin/tariff/interface/find.interface';
 import { Tariff } from '@persistence/admin/tariff/tariff.entity';
@@ -25,14 +30,14 @@ export class TariffServiceImpl implements ITariffService {
       where: { active: true },
     });
     if (tariffs.length === 0)
-      throw new NotFoundException('TODO: create constants');
+      throw new NotFoundException(ACTIVE_TARIFFS_NOT_EXIST);
 
     return tariffs;
   }
 
   async findById(id: number): Promise<IFindTariff> {
     const tariff = await this.tariffRepository.findById(id);
-    if (!tariff) throw new NotFoundException('');
+    if (!tariff) throw new NotFoundException(TARIFF_NOT_FOUND);
 
     return tariff;
   }
@@ -40,14 +45,14 @@ export class TariffServiceImpl implements ITariffService {
   async findAll(): Promise<IFindTariff[]> {
     const tariffs = await this.tariffRepository.findAll();
     if (!tariffs || tariffs.length === 0)
-      throw new NotFoundException('В системе еще нет тарифов!');
+      throw new NotFoundException(TARIFFS_NOT_FOUND);
 
     return tariffs;
   }
 
   async editById(id: number, updateDto: UpdateTariffDto): Promise<IFindTariff> {
     const tariff = await this.tariffRepository.findById(id);
-    if (!tariff) throw new NotFoundException('');
+    if (!tariff) throw new NotFoundException(TARIFF_NOT_FOUND);
 
     return this.tariffRepository.edit(id, {
       ...updateDto,
@@ -61,7 +66,7 @@ export class TariffServiceImpl implements ITariffService {
 
   async deleteById(id: number): Promise<Tariff> {
     const tariff = await this.tariffRepository.findById(id);
-    if (!tariff) throw new NotFoundException('');
+    if (!tariff) throw new NotFoundException(TARIFF_NOT_FOUND);
 
     return this.tariffRepository.remove(tariff);
   }

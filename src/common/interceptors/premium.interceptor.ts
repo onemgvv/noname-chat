@@ -1,17 +1,24 @@
+import { CLOUDPAYMENTS_SERVICE } from '@config/constants';
 import { RolesList } from '@enums/roles.enum';
 import { User } from '@persistence/app/user/user.entity';
 import {
   CallHandler,
   ExecutionContext,
+  Inject,
   Injectable,
   NestInterceptor,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { ICloudPaymentsService } from '@utils/cloudpayments/interface/cp-service.interface';
+
+const CloudpaymentsRepo = () => Inject(CLOUDPAYMENTS_SERVICE);
 
 @Injectable()
 export class CheckPremiumInterceptor implements NestInterceptor {
-  // constructor(private cloudpaymentService: CloudPaymentsService) {}
+  constructor(
+    @CloudpaymentsRepo() private cloudpaymentService: ICloudPaymentsService,
+  ) {}
 
   async intercept(
     context: ExecutionContext,
@@ -38,10 +45,10 @@ export class CheckPremiumInterceptor implements NestInterceptor {
     }
 
     if (!user.premium || today > premium) {
-      // const result = await this.cloudpaymentService.renewSubscription(
-      //   user.email,
-      // );
-      // if (result.status) return next.handle();
+      const result = await this.cloudpaymentService.renewSubscription(
+        user.email,
+      );
+      if (result.status) return next.handle();
 
       user.premium = null;
       user.roles.filter((r) => r.name !== RolesList.PREMIUM);

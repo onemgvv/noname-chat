@@ -1,5 +1,5 @@
-import { FILTER_REPO } from '@config/constants';
-import { Inject, Injectable } from '@nestjs/common';
+import { FILTER_NOT_FOUND, FILTER_REPO } from '@config/constants';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Filter as FilterType } from '@domain/app/filter/filter.type';
 import { IFilterRepository } from './interface/filter-repo.interface';
 import { Filter } from '@persistence/app/filter/filter.entity';
@@ -16,18 +16,30 @@ export class FilterServiceImpl implements IFilterService {
   }
 
   async findByUserId(userId: number, relations?: string[]): Promise<Filter> {
-    return this.filterRepository.getByUserId(userId, relations);
+    const filter = await this.filterRepository.getByUserId(userId, relations);
+    if (!filter) throw new NotFoundException(FILTER_NOT_FOUND);
+
+    return filter;
   }
 
   async update(id: number, data: Partial<FilterType>): Promise<Filter> {
-    return this.filterRepository.edit(id, data);
+    const filter = await this.filterRepository.findOne(id);
+    if (!filter) throw new NotFoundException(FILTER_NOT_FOUND);
+
+    return this.filterRepository.edit(filter, data);
   }
 
   async deleteOne(id: number): Promise<Filter> {
-    return this.filterRepository.deleteOne(id);
+    const filter = await this.filterRepository.findOne(id);
+    if (!filter) throw new NotFoundException(FILTER_NOT_FOUND);
+
+    return this.filterRepository.remove(filter);
   }
 
   async deleteByUser(userId: number): Promise<Filter> {
-    return this.filterRepository.deleteByUserId(userId);
+    const filter = await this.filterRepository.findOne({ where: { userId } });
+    if (!filter) throw new NotFoundException(FILTER_NOT_FOUND);
+
+    return this.filterRepository.remove(filter);
   }
 }

@@ -19,14 +19,10 @@ export class TopicRepository
     return this.save(topic);
   };
 
-  receiveAll = async (relations?: string[]): Promise<Topic[]> => {
-    const topics = await this.find({
+  receiveAll = (relations?: string[]): Promise<Topic[]> => {
+    return this.find({
       relations: relations ?? this.allRelations,
     });
-
-    if (topics.length === 0) throw new NotFoundException(TOPICS_NOT_FOUND);
-
-    return topics;
   };
 
   findById = async (id: number, relations?: string[]): Promise<Topic> => {

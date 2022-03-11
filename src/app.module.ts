@@ -6,7 +6,6 @@ import { UtilsModule } from './utils/utils.module';
 import { DomainModule } from './domain/domain.module';
 import { DatabaseModule } from '@database/database.module';
 import { PersistenceModule } from './persistence/persistence.module';
-import { CheckPremiumProvider } from '@common/providers/premium.provider';
 
 @Module({
   imports: [
@@ -22,6 +21,5 @@ import { CheckPremiumProvider } from '@common/providers/premium.provider';
     UtilsModule,
     AuthModule,
   ],
-  providers: [CheckPremiumProvider],
 })
 export class AppModule {}

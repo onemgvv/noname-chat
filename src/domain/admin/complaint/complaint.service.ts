@@ -1,5 +1,12 @@
+import { COMPLAINT_NOT_FOUND } from './../../../common/config/constants';
 import { IComplaintRepository } from '@domain/admin/complaint/interface/complaint-repo.interface';
-import { COMPLAINT_REPO } from '@config/constants';
+import {
+  COMPLAINT_REPO,
+  COMPLAINTS_NOT_FOUND,
+  ACATIVE_COMPLAINTS_NOT_FOUND,
+  DECIDED_COMPLAINTS_NOT_FOUND,
+  COMPLAINT_NF_OR_DECIDE,
+} from '@config/constants';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IComplaintService } from './interface/complaint-service.interface';
 import { CreateComplaintsDto } from '@api/admin/complaint/dto/create.dto';
@@ -19,7 +26,8 @@ export class ComplaintServiceImpl implements IComplaintService {
 
   async findAll(): Promise<Complaint[]> {
     const complaints = await this.complaintRepository.find();
-    if (complaints.length === 0) throw new NotFoundException('TODO: constants');
+    if (complaints.length === 0)
+      throw new NotFoundException(COMPLAINTS_NOT_FOUND);
 
     return complaints;
   }
@@ -28,7 +36,7 @@ export class ComplaintServiceImpl implements IComplaintService {
     const active = await this.complaintRepository.find({
       where: { active: true },
     });
-    if (!active) throw new NotFoundException('');
+    if (!active) throw new NotFoundException(ACATIVE_COMPLAINTS_NOT_FOUND);
 
     return active;
   }
@@ -37,7 +45,7 @@ export class ComplaintServiceImpl implements IComplaintService {
     const decided = await this.complaintRepository.find({
       where: { active: false },
     });
-    if (!decided) throw new NotFoundException('Нет закрытых жалоб!');
+    if (!decided) throw new NotFoundException(DECIDED_COMPLAINTS_NOT_FOUND);
 
     return decided;
   }
@@ -46,8 +54,7 @@ export class ComplaintServiceImpl implements IComplaintService {
     const complaint: Complaint = await this.complaintRepository.findOne({
       where: { id, active: true },
     });
-    if (!complaint)
-      throw new NotFoundException('Жалоба не найдена или уже решена');
+    if (!complaint) throw new NotFoundException(COMPLAINT_NF_OR_DECIDE);
 
     complaint.active = false;
     return complaint.save();
@@ -55,7 +62,7 @@ export class ComplaintServiceImpl implements IComplaintService {
 
   async deleteById(id: number): Promise<Complaint> {
     const complaint = await this.complaintRepository.findOne(id);
-    if (!complaint) throw new NotFoundException('Жалоба уже удалена!');
+    if (!complaint) throw new NotFoundException(COMPLAINT_NOT_FOUND);
 
     return complaint.remove();
   }

@@ -1,9 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Topic } from '@persistence/app/topic/topic.entity';
 import { ITopicRepository } from './interface/topic-repo.interface';
 import { ITopicService } from './interface/topic-service.interface';
 import { Topic as TopicType } from './topic.type';
-import { TOPIC_REPO } from '@config/constants';
+import { TOPICS_NOT_FOUND, TOPIC_REPO } from '@config/constants';
 
 const TopicRepo = () => Inject(TOPIC_REPO);
 
@@ -16,7 +16,10 @@ export class TopicServiceImpl implements ITopicService {
   }
 
   async find(relations?: string[]): Promise<Topic[]> {
-    return this.topicRepository.receiveAll(relations);
+    const topics = await this.topicRepository.receiveAll(relations);
+    if (topics.length === 0) throw new NotFoundException(TOPICS_NOT_FOUND);
+
+    return topics;
   }
 
   async findById(id: number, relations?: string[]): Promise<Topic> {
