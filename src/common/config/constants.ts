@@ -95,6 +95,7 @@ export const BLACKLIST_REPO = 'BlacklistRepository';
 export const STORY_CONTENT_REPO = 'StoryContentRepository';
 
 // SERVICES
+export const CHAT_QUEUE = 'ChatQueue';
 export const USER_SERVICE = 'UserService';
 export const AUTH_SERVICE = 'AuthService';
 export const MAIL_SERVICE = 'MailService';

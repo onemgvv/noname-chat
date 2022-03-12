@@ -4,6 +4,9 @@ import { Module } from '@nestjs/common';
 import { Helper } from './app.helper';
 import { CloudpaymentsModule } from './cloudpayments/cloudpayments.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { AppGateway } from './gateways/app.gateway';
+import { ChatQueueService } from './chat/chat.queue';
+import { AdminService } from './admin.service';
 
 @Module({
   imports: [
@@ -12,9 +15,12 @@ import { NotificationsModule } from './notifications/notifications.module';
     FilestoreModule,
     NotificationsModule,
   ],
-  providers: [Helper],
+  providers: [AppGateway, Helper, ChatQueueService, AdminService],
   exports: [
     Helper,
+    AppGateway,
+    AdminService,
+    ChatQueueService,
     MailServiceModule,
     CloudpaymentsModule,
     FilestoreModule,

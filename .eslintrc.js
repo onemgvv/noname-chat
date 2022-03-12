@@ -32,6 +32,9 @@ module.exports = {
     'no-console': 'off',
     semi: [2, 'always'],
     'no-shadow': 'off',
+    'array-callback-return': 'off',
+    'consistent-return': 'off',
+    'no-unneeded-ternary': 'off',
     '@typescript-eslint/no-shadow': ['error'],
   },
 };

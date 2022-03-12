@@ -5,7 +5,7 @@ import { IUserService } from './interface/user-service.inerface';
 import { User } from '@persistence/app/user/user.entity';
 import { User as UserType } from '@domain/app/user/user.type';
 import { SocialIds } from '@common/types/app.types';
-import { UserRoles, UserSex } from '@common/types/user.types';
+import { UserRoles } from '@common/types/user.types';
 import {
   BLACKLIST_REPO,
   EMPTY_BLACKLIST,
@@ -14,7 +14,6 @@ import {
   USER_REPO,
   ROLE_NOT_FOUND,
   USERS_NOT_FOUND,
-  CITY_REPO,
 } from '@config/constants';
 import { Helper } from '@utils/app.helper';
 import { IBlacklistRepository } from './interface/blacklist-repo.interface';
@@ -22,13 +21,9 @@ import { NewBlockInterface } from './interface/new-block.interface';
 import { Role } from '@persistence/app/role/role.entity';
 import { RolesList } from '@enums/roles.enum';
 import { IRoleRepository } from './interface/role-repo.interface';
-import { IFindCity } from '@domain/admin/city/interface/find.interface';
-import { City } from '@persistence/admin/city/city.entity';
-import { ICityRepository } from '@domain/admin/city/interface/city-repo.interface';
 
 const UserRepo = () => Inject(USER_REPO);
 const RoleRepo = () => Inject(ROLE_REPO);
-const CityRepo = () => Inject(CITY_REPO);
 const BlacklistRepo = () => Inject(BLACKLIST_REPO);
 
 @Injectable()
@@ -36,7 +31,6 @@ export class UserServiceImpl implements IUserService {
   constructor(
     @UserRepo() private userRepository: IUserRepository,
     @RoleRepo() private roleRepository: IRoleRepository,
-    @CityRepo() private cityRepository: ICityRepository,
     @BlacklistRepo()
     private blacklistRepository: IBlacklistRepository,
   ) {}
@@ -203,51 +197,5 @@ export class UserServiceImpl implements IUserService {
   async deleteAccount(userId: number): Promise<User> {
     const account = await this.userRepository.findById(userId);
     return this.userRepository.deleteOne(account);
-  }
-
-  // TODO: move it in utils
-
-  async getCountSex(sex: UserSex): Promise<number> {
-    const result = await this.userRepository.getCountSex(sex);
-    return result[1];
-  }
-
-  async getAgesGroup() {
-    const users = await this.userRepository.findAll();
-
-    const groups = [
-      { title: '16-18', count: 0 },
-      { title: '19-24', count: 0 },
-      { title: '25-29', count: 0 },
-      { title: '30+', count: 0 },
-    ];
-
-    users.forEach((user: User) => {
-      if (user.age >= 16 && user.age <= 18) {
-        groups[0].count += 1;
-      } else if (user.age >= 19 && user.age <= 24) {
-        groups[1].count += 1;
-      } else if (user.age >= 25 && user.age <= 29) {
-        groups[2].count += 1;
-      } else if (user.age >= 30) {
-        groups[3].count += 1;
-      }
-    });
-
-    return groups;
-  }
-
-  async getGeoraphic() {
-    const cities: IFindCity[] = await this.cityRepository.find();
-    const users: User[] = await this.userRepository.findAll();
-    const data = [];
-
-    await cities.map(async (city: City) => {
-      console.log(city.name);
-      const cityUsers = users.filter((user: User) => user.city === city.name);
-      data.push({ name: city.name, count: cityUsers.length });
-    });
-
-    return data;
   }
 }
