@@ -16,7 +16,7 @@ export class UserRepository
     'token',
     'roles',
     'filter',
-    'elite',
+    'elites',
     'blacklist',
   ];
 

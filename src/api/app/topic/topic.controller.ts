@@ -25,7 +25,7 @@ import { CreateTopicDto } from './dto/create.dto';
 
 const TopicService = () => Inject(TOPIC_SERVICE);
 
-@Controller('topic')
+@Controller('themes')
 export class TopicController {
   constructor(@TopicService() private topicService: ITopicService) {}
 
