@@ -196,7 +196,21 @@ export class ChatService {
     return partner;
   }
 
-  async findChatPartnerWithSearch(roomType: RoomType, user: SocketUser) {}
+  async findChatPartnerWithSearch(roomType: RoomType, socketUser: SocketUser) {
+    let partner: SocketUser;
+
+    if (roomType === RoomType.DEFAULT) {
+      partner = await ChatQueueService.findWithFilterFromDefault(
+        socketUser.user,
+      );
+    }
+
+    if (roomType === RoomType.ADULT) {
+      partner = await ChatQueueService.findWithFilterFromAdult(socketUser.user);
+    }
+
+    return partner;
+  }
 
   /**
    *
@@ -269,7 +283,53 @@ export class ChatService {
   }
 
   async connectNewUserToBot(client: Socket, user: User) {
-    // if (client.data.connections === this.botConnectionSteps[0]) { }
+    let timeout;
+    if (client.data.connections === this.botConnectionSteps[0]) {
+      timeout = setTimeout(() => {
+        const defaultQueue = ChatQueueService.getDefaultQueue();
+        if (defaultQueue.find((dq) => dq.user.id !== user.id)) {
+          return clearTimeout(timeout);
+        }
+
+        return this.connectUserToBot(client);
+      }, this.botConnectionSteps[0] * 60 * 1000);
+    } else if (client.data.connections === this.botConnectionSteps[1]) {
+      timeout = setTimeout(() => {
+        const defaultQueue = ChatQueueService.getDefaultQueue();
+        if (defaultQueue.find((dq) => dq.user.id !== user.id)) {
+          return clearTimeout(timeout);
+        }
+
+        return this.connectUserToBot(client);
+      }, this.botConnectionSteps[1] * 60 * 1000);
+    } else if (client.data.connections === this.botConnectionSteps[2]) {
+      timeout = setTimeout(() => {
+        const defaultQueue = ChatQueueService.getDefaultQueue();
+        if (defaultQueue.find((dq) => dq.user.id !== user.id)) {
+          return clearTimeout(timeout);
+        }
+
+        return this.connectUserToBot(client);
+      }, this.botConnectionSteps[2] * 60 * 1000);
+    } else if (client.data.connections === this.botConnectionSteps[3]) {
+      timeout = setTimeout(() => {
+        const defaultQueue = ChatQueueService.getDefaultQueue();
+        if (defaultQueue.find((dq) => dq.user.id !== user.id)) {
+          return clearTimeout(timeout);
+        }
+
+        return this.connectUserToBot(client);
+      }, this.botConnectionSteps[3] * 60 * 1000);
+    } else {
+      timeout = setTimeout(() => {
+        const defaultQueue = ChatQueueService.getDefaultQueue();
+        if (defaultQueue.find((dq) => dq.user.id !== user.id)) {
+          return clearTimeout(timeout);
+        }
+
+        return this.connectUserToBot(client);
+      }, 20 * 60 * 1000);
+    }
   }
 
   @SubscribeMessage('CLIENT:STOP_SEARCH')
