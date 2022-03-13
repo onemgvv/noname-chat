@@ -7,12 +7,18 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { AppGateway } from './gateways/app.gateway';
 import { ChatQueueService } from './chat/chat.queue';
 import { AdminService } from './admin.service';
+import { UserModule } from '@domain/app/user/user.module';
+import { PaymentModule } from '@domain/admin/payment/payment.module';
+import { RoleRepositoryModule } from '@persistence/app/role/role.module';
 
 @Module({
   imports: [
+    UserModule,
+    PaymentModule,
     MailServiceModule,
     CloudpaymentsModule,
     FilestoreModule,
+    RoleRepositoryModule,
     NotificationsModule,
   ],
   providers: [AppGateway, Helper, ChatQueueService, AdminService],
