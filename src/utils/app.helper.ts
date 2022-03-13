@@ -10,7 +10,7 @@ import { Inject } from '@nestjs/common';
 const UserRepo = () => Inject(USER_REPO);
 const MessageRepo = () => Inject(MESSAGE_REPO);
 
-interface AgeGroups {
+export interface AgeGroups {
   title: string;
   count: number;
 }
