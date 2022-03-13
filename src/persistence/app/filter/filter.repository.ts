@@ -10,7 +10,7 @@ export class FilterRepository
   extends Repository<Filter>
   implements IFilterRepository
 {
-  private allRelations = ['users'];
+  private allRelations = ['user'];
 
   async newFilter(data: Partial<FilterType>): Promise<Filter> {
     const filter = await this.create(data);

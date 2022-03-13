@@ -11,7 +11,7 @@ export class BlacklistRepository
   extends Repository<Blacklist>
   implements IBlacklistRepository
 {
-  private allRelations = ['users'];
+  private allRelations = ['user'];
 
   async newBlacklist(data: ICreateBlacklist): Promise<Blacklist> {
     const blacklist = await this.create(data);

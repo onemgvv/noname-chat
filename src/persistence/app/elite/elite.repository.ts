@@ -15,7 +15,7 @@ export class EliteRepository
   extends Repository<Elite>
   implements IEliteRepository
 {
-  private allRelations = ['users'];
+  private allRelations = ['user'];
 
   async newElite(data: Partial<EliteType>): Promise<Elite> {
     const elite = await this.create(data);

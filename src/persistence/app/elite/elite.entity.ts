@@ -10,7 +10,7 @@ import {
   BaseEntity,
 } from 'typeorm';
 
-@Entity({ name: 'elites' })
+@Entity({ name: 'elite' })
 export class Elite extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
