@@ -1,6 +1,6 @@
 import { User as UserType } from '../user.type';
 import { User } from '@persistence/app/user/user.entity';
-import { UserRoles } from '@common/types/user.types';
+import { UserRoles, UserSex } from '@common/types/user.types';
 import { SocialIds } from '@common/types/app.types';
 import { NewBlockInterface } from './new-block.interface';
 
@@ -23,4 +23,5 @@ export interface IUserService {
   unblock(ownerId: number, targetId: number): Promise<{ message: string }>;
   ban(userId: number, expiresIn: number): Promise<User>;
   unban(userId: number): Promise<User>;
+  getCountSex(sex: UserSex): Promise<[User[], number]>;
 }

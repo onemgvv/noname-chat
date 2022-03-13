@@ -30,6 +30,7 @@ import { Folder } from '@common/types/app.types';
 import { CanEditInterceptor } from '@common/interceptors/can-edit.interceptor';
 import { UserRoles } from '@common/types/user.types';
 import { NewBlockInterface } from '@domain/app/user/interface/new-block.interface';
+import { Helper } from '@utils/app.helper';
 
 const UserService = () => Inject(USER_SERVICE);
 const FilestoreService = () => Inject(FILESTORE_SERVICE);
@@ -273,7 +274,8 @@ export class UsersController {
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
   @UseGuards(CustomAuthGuard, RolesGuard)
   async getAgesGroups() {
-    return this.userService.getAgesGroup();
+    const users = await this.userService.receiveUser();
+    return Helper.sortByAgesGroups(users);
   }
 
   @Get('data/gender-groups')

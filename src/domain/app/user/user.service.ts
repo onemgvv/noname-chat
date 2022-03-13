@@ -5,7 +5,7 @@ import { IUserService } from './interface/user-service.inerface';
 import { User } from '@persistence/app/user/user.entity';
 import { User as UserType } from '@domain/app/user/user.type';
 import { SocialIds } from '@common/types/app.types';
-import { UserRoles } from '@common/types/user.types';
+import { UserRoles, UserSex } from '@common/types/user.types';
 import {
   BLACKLIST_REPO,
   EMPTY_BLACKLIST,
@@ -197,5 +197,9 @@ export class UserServiceImpl implements IUserService {
   async deleteAccount(userId: number): Promise<User> {
     const account = await this.userRepository.findById(userId);
     return this.userRepository.deleteOne(account);
+  }
+
+  async getCountSex(sex: UserSex): Promise<[User[], number]> {
+    return this.userRepository.getCountSex(sex);
   }
 }

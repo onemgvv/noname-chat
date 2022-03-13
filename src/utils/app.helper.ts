@@ -10,6 +10,11 @@ import { Inject } from '@nestjs/common';
 const UserRepo = () => Inject(USER_REPO);
 const MessageRepo = () => Inject(MESSAGE_REPO);
 
+interface AgeGroups {
+  title: string;
+  count: number;
+}
+
 export class Helper {
   @UserRepo()
   private static userRepository: IUserRepository;
@@ -119,5 +124,23 @@ export class Helper {
     );
 
     return { id: dialogId, author, target, lastMessage };
+  }
+
+  static async sortByAgesGroups(users: User[]): Promise<AgeGroups[]> {
+    const data: AgeGroups[] = [
+      { title: '16-18', count: 0 },
+      { title: '19-24', count: 0 },
+      { title: '25-29', count: 0 },
+      { title: '30+', count: 0 },
+    ];
+
+    await users.map((user: User) => {
+      if (user.age <= 18 && user.age >= 16) data[0].count += 1;
+      else if (user.age <= 24 && user.age >= 19) data[1].count += 1;
+      else if (user.age <= 29 && user.age >= 25) data[2].count += 1;
+      else if (user.age >= 30) data[3].count += 1;
+    });
+
+    return data;
   }
 }
