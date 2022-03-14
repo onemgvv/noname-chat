@@ -14,6 +14,7 @@ export class PostgresConfig {
       port: Number(configService.get('CHAT_DB_PORT')),
       username: configService.get('CHAT_DB_USERNAME'),
       password: configService.get('CHAT_DB_PASSWORD'),
+      synchronize: false,
       entities: [process.cwd() + '/dist/persistence/chat/**/*.entity.js'],
       migrationsTableName: 'migrations',
       migrations: [process.cwd() + '/src/database/migrations/chat/*{.js,.ts}'],

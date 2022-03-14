@@ -14,6 +14,7 @@ export class PostgresConfig {
       port: Number(configService.get('DB_PORT')),
       username: configService.get('DB_USERNAME'),
       password: configService.get('DB_PASSWORD'),
+      synchronize: false,
       entities: [process.cwd() + '/dist/persistence/app/**/*.entity.js'],
       migrationsTableName: 'migrations',
       migrations: [process.cwd() + '/src/database/migrations/main/*{.js,.ts}'],

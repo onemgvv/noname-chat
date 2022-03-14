@@ -14,6 +14,7 @@ export class PostgresConfig {
       port: Number(configService.get('ADMIN_DB_PORT')),
       username: configService.get('ADMIN_DB_USERNAME'),
       password: configService.get('ADMIN_DB_PASSWORD'),
+      synchronize: false,
       entities: [process.cwd() + '/dist/persistence/admin/**/*.entity.js'],
       migrationsTableName: 'migrations',
       migrations: [process.cwd() + '/src/database/migrations/admin/*{.js,.ts}'],

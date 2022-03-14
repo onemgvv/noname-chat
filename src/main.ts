@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import * as compression from 'compression';
@@ -5,7 +6,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { CheckBanInterceptor } from '@interceptors/check-ban.interceptor';
-import { ValidationPipe } from '@common/pipes/validation.pipe';
 
 async function bootstrap() {
   const PORT = process.env.PORT;
@@ -41,7 +41,7 @@ async function bootstrap() {
   });
 
   // use global validation pipes
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   // set global prefix "api"
   app.setGlobalPrefix('api');
   // global interceptors

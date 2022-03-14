@@ -31,16 +31,23 @@ import { CanEditInterceptor } from '@common/interceptors/can-edit.interceptor';
 import { UserRoles } from '@common/types/user.types';
 import { NewBlockInterface } from '@domain/app/user/interface/new-block.interface';
 import { Helper } from '@utils/app.helper';
+import { AppGateway } from '@utils/gateways/app.gateway';
+import { Server } from 'socket.io';
 
 const UserService = () => Inject(USER_SERVICE);
 const FilestoreService = () => Inject(FILESTORE_SERVICE);
 
 @Controller('users')
 export class UsersController {
+  private server: Server;
+
   constructor(
     @UserService() private userService: IUserService,
-    @FilestoreService() private readonly fsService: IFilestoreService, // private readonly chatGateway: ChatGateway,
-  ) {}
+    @FilestoreService() private readonly fsService: IFilestoreService,
+    private readonly appGateway: AppGateway,
+  ) {
+    this.server = appGateway.server;
+  }
 
   @Post('roles')
   @Roles(RolesList.ADMIN)
@@ -255,9 +262,7 @@ export class UsersController {
   @UseGuards(CustomAuthGuard, RolesGuard)
   async banUser(@Body() dto: BanUserDto) {
     const result = await this.userService.ban(dto.userId, dto.expiresIn);
-    // this.chatGateway.server
-    //   .to(`messages/${dto.userId}`)
-    //   .emit('SERVER:USER_BANNED');
+    this.server.to(`messages/${dto.userId}`).emit('SERVER:USER_BANNED');
     return { status: 200, result };
   }
 

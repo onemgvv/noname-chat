@@ -2,15 +2,21 @@ import { plainToClass } from 'class-transformer';
 import {
   ArgumentMetadata,
   Injectable,
+  ValidationPipe,
   PipeTransform,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { validate } from 'class-validator';
 
 @Injectable()
-export class ValidationPipe implements PipeTransform<any> {
+export class CustomValidationPipe
+  extends ValidationPipe
+  implements PipeTransform<any>
+{
   async transform(value: any, metadata: ArgumentMetadata): Promise<any> {
     const obj = plainToClass(metadata.metatype, value);
+    if (obj) return;
+
     const errors = await validate(obj);
 
     if (errors.length) {
