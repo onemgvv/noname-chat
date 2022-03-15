@@ -1,3 +1,4 @@
+import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateDialogDto } from './dto/create.dto';
 import { TransformInterceptor } from '@common/interceptors/transform.interceptor';
 import { DIALOG_SERVICE } from '@config/constants';
@@ -18,10 +19,13 @@ import { Dialog } from '@persistence/chat/dialog/dialog.entity';
 
 const DialogService = () => Inject(DIALOG_SERVICE);
 
+@ApiTags('Chat dialog')
 @Controller('chat/dialogs')
 export class DialogController {
   constructor(@DialogService() private dialogService: IDialogService) {}
 
+  @ApiResponse({ status: 201, description: 'Dialog created successfully' })
+  @ApiBody({ type: CreateDialogDto })
   @Post()
   @HttpCode(201)
   @UseInterceptors(new TransformInterceptor(CreateDialogDto))
@@ -29,6 +33,14 @@ export class DialogController {
     return this.dialogService.create(dialogDto);
   }
 
+  @ApiResponse({ status: 200, description: 'Dialogs found by author' })
+  @ApiResponse({ status: 404, description: 'Dialogs not found' })
+  @ApiParam({
+    name: 'id',
+    description: 'users id',
+    type: Number,
+    required: true,
+  })
   @Get('user/:id')
   async findByUserId(
     @Param('id') userId: number,
@@ -36,11 +48,27 @@ export class DialogController {
     return this.dialogService.findByAuthor(userId);
   }
 
+  @ApiResponse({ status: 200, description: 'Dialog found' })
+  @ApiResponse({ status: 404, description: 'Dialog not found' })
+  @ApiParam({
+    name: 'id',
+    description: 'dialog id',
+    type: Number,
+    required: true,
+  })
   @Get(':id')
   async findById(@Param('id') dialogId: number): Promise<FindDialogDto> {
     return this.dialogService.findOne(dialogId);
   }
 
+  @ApiResponse({ status: 200, description: 'Dialog deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Dialog not found' })
+  @ApiParam({
+    name: 'id',
+    description: 'dialog id',
+    type: Number,
+    required: true,
+  })
   @Delete(':id')
   async deleteById(@Param('id') dialogId: number): Promise<Dialog> {
     return this.dialogService.deleteOne(dialogId);

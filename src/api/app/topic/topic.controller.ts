@@ -1,3 +1,4 @@
+import { ApiTags } from '@nestjs/swagger';
 import { TransformInterceptor } from '@common/interceptors/transform.interceptor';
 import { CustomAuthGuard } from '@common/guards/custom-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
@@ -25,6 +26,7 @@ import { CreateTopicDto } from './dto/create.dto';
 
 const TopicService = () => Inject(TOPIC_SERVICE);
 
+@ApiTags('Topics')
 @Controller('themes')
 export class TopicController {
   constructor(@TopicService() private topicService: ITopicService) {}

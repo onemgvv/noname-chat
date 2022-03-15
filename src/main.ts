@@ -53,6 +53,7 @@ async function bootstrap() {
     .setDescription('Democracy API Documentation created with OpenAPI')
     .setVersion('1.0')
     .addTag('application')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);

@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@persistence/app/user/user.entity';
 import {
   Entity,
@@ -15,6 +16,11 @@ export class Token extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({
+    type: String,
+    description: 'jwt refresh token',
+    example: 'kjksvhdj783908776ftghcio#76_@87',
+  })
   @Column('varchar')
   refreshToken: string;
 

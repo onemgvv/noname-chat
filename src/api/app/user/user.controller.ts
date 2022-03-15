@@ -33,10 +33,12 @@ import { NewBlockInterface } from '@domain/app/user/interface/new-block.interfac
 import { Helper } from '@utils/app.helper';
 import { AppGateway } from '@utils/gateways/app.gateway';
 import { Server } from 'socket.io';
+import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 const UserService = () => Inject(USER_SERVICE);
 const FilestoreService = () => Inject(FILESTORE_SERVICE);
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   private server: Server;
@@ -49,6 +51,13 @@ export class UsersController {
     this.server = appGateway.server;
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Role [rolename] added to user [user.email]',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 404, description: 'Role not found' })
+  @ApiBody({ type: UserRolesRequest })
   @Post('roles')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard)
@@ -64,6 +73,19 @@ export class UsersController {
     };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Premium added to user',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 404, description: 'Role not found' })
+  @ApiParam({
+    name: 'userId',
+    description: 'users id',
+    required: true,
+    type: Number,
+  })
+  @ApiBody({ type: GivePremiumDto })
   @Post(':userId/roles/premium')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -81,11 +103,29 @@ export class UsersController {
     };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Role removed from user',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 404, description: 'Role not found' })
+  @ApiParam({
+    name: 'userId',
+    description: 'users id',
+    required: true,
+    type: Number,
+  })
+  @ApiParam({
+    name: 'role',
+    description: 'role name',
+    required: true,
+    type: String,
+  })
   @Delete(':userId/roles/:role')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
   async deleteRole(
-    @Param(':userId') userId: number,
+    @Param('userId') userId: number,
     @Param('role') roleName: UserRoles,
   ) {
     const user: User = await this.userService.deleteRole(userId, roleName);
@@ -96,6 +136,17 @@ export class UsersController {
     };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Premium r ole removed from user',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({
+    name: 'id',
+    description: 'users id',
+    required: true,
+    type: Number,
+  })
   @Delete(':id/roles/premium')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -104,6 +155,10 @@ export class UsersController {
     return { status: true, user };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Role removed from user',
+  })
   @Delete('roles/premium')
   @UseGuards(CustomAuthGuard)
   async removePremium(@CurrentUser() currentUser: User) {
@@ -111,6 +166,17 @@ export class UsersController {
     return { status: true, user };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'User blocked',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({
+    name: 'userId',
+    description: 'target users id',
+    required: true,
+    type: Number,
+  })
   @Post('blocklist/:userId')
   @UseGuards(CustomAuthGuard)
   async blockUser(
@@ -125,6 +191,17 @@ export class UsersController {
     };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'User unblocked',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({
+    name: 'userId',
+    description: 'target users id',
+    required: true,
+    type: Number,
+  })
   @Delete('blocklist/:userId')
   @UseGuards(CustomAuthGuard)
   async removeUserBlock(
@@ -140,6 +217,11 @@ export class UsersController {
     };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Blocklist received',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
   @Get('blocklist')
   @UseGuards(CustomAuthGuard)
   async getMyBlockList(@CurrentUser() currentUser: User) {
@@ -152,6 +234,17 @@ export class UsersController {
     };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Users blocklist received',
+  })
+  @ApiResponse({ status: 404, description: 'blocklist is empty' })
+  @ApiParam({
+    name: 'userId',
+    description: 'users id',
+    required: true,
+    type: Number,
+  })
   @Get('blocklist/:userId')
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -166,6 +259,11 @@ export class UsersController {
     };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Users received',
+  })
+  @ApiResponse({ status: 404, description: 'Users not found' })
   @Get()
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -174,6 +272,17 @@ export class UsersController {
     return { message: 'Пользователи найдены', users };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'User founded',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({
+    name: 'email',
+    description: '',
+    required: true,
+    type: String,
+  })
   @Get('email/:email')
   @UseGuards(CustomAuthGuard)
   async getUserByEmail(@Param('email') email: string) {
@@ -181,6 +290,17 @@ export class UsersController {
     return { message: 'Пользователи найдены', users };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'User founded',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({
+    name: 'id',
+    description: 'target users id',
+    required: true,
+    type: Number,
+  })
   @Get('id/:id')
   @UseGuards(CustomAuthGuard)
   async getUserById(@Param('id') id: number) {
@@ -188,6 +308,17 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Пользователь найден', user };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'User founded',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({
+    name: 'code',
+    description: 'target users id',
+    required: true,
+    type: Number,
+  })
   @Get('code/:code')
   async getUserByCode(@Param('code') code: number) {
     const user = await this.userService.findUser('refreshCode', code);
@@ -195,6 +326,12 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Пользователь найден', user };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'User updated',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiBody({ type: UpdateUserDto })
   @Patch('profile')
   @UseGuards(CustomAuthGuard)
   @UseInterceptors(new CanEditInterceptor())
@@ -210,6 +347,12 @@ export class UsersController {
     };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Password updated',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiBody({ type: typeof { password: String } })
   @Patch('password')
   @UseGuards(CustomAuthGuard)
   async updatePassword(
@@ -220,6 +363,12 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Ваш пароль успешно обновлен' };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'rating updated',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiBody({ type: typeof { userId: Number, rating: Number } })
   @Patch('rating')
   @UseGuards(CustomAuthGuard)
   async updateRating(@Body() data: { userId: number; rating: number }) {
@@ -227,12 +376,29 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Рейтинг изменен', user };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Memoji uploaded',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({
+    name: 'userId',
+    description: 'target users id',
+    required: true,
+    type: Number,
+  })
   @Get('memojies/:type')
   async getMemojies(@Param('type') type: Folder): Promise<any> {
     const images = await this.fsService.receiveImages(type);
     return { statusCode: HttpStatus.OK, images };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Photo updated',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiBody({ type: UpdateUserDto })
   @Patch('photo')
   @UseGuards(CustomAuthGuard)
   updatePhoto(
@@ -242,6 +408,11 @@ export class UsersController {
     return this.userService.update(currentUser.id, updateDto);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Users account deleted',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
   @Delete('delete/account')
   @UseGuards(CustomAuthGuard)
   async deleteAccount(@CurrentUser() currentUser: User) {
@@ -249,6 +420,17 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Ваш аккаунт удален успешно!' };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'User deleted',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({
+    name: 'userId',
+    description: 'users id',
+    required: true,
+    type: Number,
+  })
   @Delete('delete/:userId')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -257,6 +439,12 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Пользователь успешно удален!' };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'User banned',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiBody({ type: BanUserDto })
   @Patch('ban')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -266,6 +454,12 @@ export class UsersController {
     return { status: 200, result };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'User unbanned',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiBody({ type: typeof { userId: Number } })
   @Patch('unban')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -274,6 +468,10 @@ export class UsersController {
     return { status: 200, result };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Users age groups received',
+  })
   @Get('data/age-groups')
   @HttpCode(200)
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
@@ -283,6 +481,10 @@ export class UsersController {
     return Helper.sortByAgesGroups(users);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Users gender groups received',
+  })
   @Get('data/gender-groups')
   @HttpCode(200)
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
@@ -294,12 +496,17 @@ export class UsersController {
     return { men: menCount, women: womenCount };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Users geographic groups received',
+  })
   @Get('data/city-groups')
   @HttpCode(200)
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
   @UseGuards(CustomAuthGuard, RolesGuard)
   async getCityGroups() {
     throw new InternalServerErrorException('Пока не работает!');
+    // TODO: get users list sorted by cities and/or countries
     // return this.userService.getGeoraphic();
   }
 }

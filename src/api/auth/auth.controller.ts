@@ -28,11 +28,14 @@ import {
   SOC_AUTH_SERVICE,
   USER_SERVICE,
 } from '@config/constants';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { RefreshPassword } from './dto/refresh-password.dto';
 
 const UserService = () => Inject(USER_SERVICE);
 const AuthService = () => Inject(AUTH_SERVICE);
 const SocAuthService = () => Inject(SOC_AUTH_SERVICE);
 
+@ApiTags('Authorization')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -41,6 +44,9 @@ export class AuthController {
     @UserService() private userService: IUserService,
   ) {}
 
+  @ApiResponse({ status: 200, description: 'User logged successfully' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiBody({ type: LoginUserDto })
   @Post('login')
   @HttpCode(200)
   @UseInterceptors(new TransformInterceptor(LoginUserDto))
@@ -54,6 +60,9 @@ export class AuthController {
       .json({ message: 'Успешно авторизован!', user });
   }
 
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 400, description: 'User already exist in system' })
+  @ApiBody({ type: CreateUserDto })
   @Post('register/standard')
   @HttpCode(201)
   @UseInterceptors(new TransformInterceptor(CreateUserDto))
@@ -67,6 +76,9 @@ export class AuthController {
       .json({ message: 'Ваш аккаунт был создан успешно!', user });
   }
 
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 400, description: 'User already exist in system' })
+  @ApiBody({ type: FastRegisterDto })
   @Post('register/fast')
   @HttpCode(201)
   @UseInterceptors(new TransformInterceptor(FastRegisterDto))
@@ -80,6 +92,9 @@ export class AuthController {
       .json({ message: 'Вы успешно прошли быструю регистрацию!', user });
   }
 
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 200, description: 'User successfully logged in' })
+  @ApiBody({ type: typeof { id_token: String } })
   @Post('google')
   @HttpCode(201)
   async google(@Res() response: Response, @Body('id_token') token: string) {
@@ -101,6 +116,9 @@ export class AuthController {
       .json({ message: 'Вы успешно авторизовались!', user });
   }
 
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 200, description: 'User successfully logged in' })
+  @ApiBody({ type: AppleLoginDto })
   @Post('apple')
   @HttpCode(201)
   @UseInterceptors(new TransformInterceptor(AppleLoginDto))
@@ -121,6 +139,9 @@ export class AuthController {
       .json({ message: 'Вы успешно авторизовались!', user });
   }
 
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 200, description: 'User successfully logged in' })
+  @ApiBody({ type: AppleSignDto })
   @Post('apple/mobile')
   @HttpCode(201)
   @UseInterceptors(new TransformInterceptor(AppleSignDto))
@@ -144,6 +165,9 @@ export class AuthController {
       .json({ message: 'Вы успешно авторизовались!', user });
   }
 
+  @ApiBody({ type: VKAuthDto })
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 200, description: 'User successfully logged in' })
   @Post('vkontakte')
   @HttpCode(201)
   @UseInterceptors(new TransformInterceptor(VKAuthDto))
@@ -170,13 +194,25 @@ export class AuthController {
       .json({ message: 'Вы успешно авторизовались!', user });
   }
 
+  @ApiResponse({
+    status: 201,
+    description: 'User refresh code created successfully',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiBody({ type: String })
   @Post('restore')
   @HttpCode(200)
-  async refreshPassword(@Body('email') email: string) {
-    const data = await this.authService.refreshPassword(email);
-    return data;
+  async refreshPassword(@Body() data: RefreshPassword) {
+    const result = await this.authService.refreshPassword(data.email);
+    return result;
   }
 
+  @ApiResponse({
+    status: 201,
+    description: 'User password updated successfully',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiBody({ type: RestorePasswordDto })
   @Patch('restore')
   @HttpCode(200)
   async changePass(@Body() restoreData: RestorePasswordDto) {

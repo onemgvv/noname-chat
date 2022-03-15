@@ -1,8 +1,13 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import { IsNotEmpty, IsNumber, Min, Max } from 'class-validator';
 
 @Exclude()
 export class GivePremiumDto {
+  @ApiProperty({
+    type: Number,
+    description: 'The number of days for which the premium is issued',
+  })
   @Expose()
   @IsNotEmpty({
     message:

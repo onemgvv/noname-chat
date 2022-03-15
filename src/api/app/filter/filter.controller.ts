@@ -1,3 +1,4 @@
+import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TransformInterceptor } from '@common/interceptors/transform.interceptor';
 import { CustomAuthGuard } from '@common/guards/custom-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
@@ -29,6 +30,7 @@ import { CheckPremiumInterceptor } from '@interceptors/premium.interceptor';
 const FilterService = () => Inject(FILTER_SERVICE);
 const UserService = () => Inject(USER_SERVICE);
 
+@ApiTags('Filter')
 @Controller('filter')
 export class FilterController {
   constructor(
@@ -36,6 +38,8 @@ export class FilterController {
     @UserService() private userService: IUserService,
   ) {}
 
+  @ApiResponse({ status: 201, description: 'Filter successfully created' })
+  @ApiBody({ type: CreateFilterDto })
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @Roles(RolesList.PREMIUM)
@@ -55,6 +59,13 @@ export class FilterController {
     };
   }
 
+  @ApiResponse({ status: 200, description: 'Filter successfully found' })
+  @ApiParam({
+    name: 'id',
+    description: 'users id',
+    required: true,
+    type: Number,
+  })
   @Get(':id')
   @UseGuards(CustomAuthGuard, RolesGuard)
   @Roles(RolesList.PREMIUM)
@@ -70,6 +81,14 @@ export class FilterController {
     };
   }
 
+  @ApiResponse({ status: 200, description: 'Filter successfully updated' })
+  @ApiParam({
+    name: 'id',
+    description: 'filter id',
+    required: true,
+    type: Number,
+  })
+  @ApiBody({ type: UpdateFilterDto })
   @Put(':id')
   @Roles(RolesList.PREMIUM)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -87,6 +106,13 @@ export class FilterController {
     };
   }
 
+  @ApiResponse({ status: 200, description: 'Filter successfully deleted' })
+  @ApiParam({
+    name: 'userId',
+    description: 'users id',
+    required: true,
+    type: Number,
+  })
   @Delete()
   @Roles(RolesList.PREMIUM)
   @UseGuards(CustomAuthGuard, RolesGuard)
