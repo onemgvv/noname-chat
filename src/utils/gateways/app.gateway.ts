@@ -99,7 +99,6 @@ export class AppGateway
 
     console.log('[QUEUE USER]: ', this.chatQueue.getCurrentUser());
 
-    console.log('[USER FROM CLIENT]: ', user);
     // check users sex for correctly
     if (user.sex === GENDERS.MALE) this.mensOnline += 1;
     else if (user.sex === GENDERS.FEMALE) this.womensOnline += 1;
