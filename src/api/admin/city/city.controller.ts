@@ -1,3 +1,4 @@
+import { ApiTags } from '@nestjs/swagger';
 import { CITY_SERVICE, COUNTRY_SERVICE } from '@config/constants';
 import {
   Controller,
@@ -29,6 +30,7 @@ import { ICoutnryService } from '@domain/admin/country/interface/country-service
 const CityService = () => Inject(CITY_SERVICE);
 const CountryService = () => Inject(COUNTRY_SERVICE);
 
+@ApiTags('Admin cities')
 @Controller('cities')
 export class CityController {
   constructor(

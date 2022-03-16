@@ -28,7 +28,7 @@ import {
   SOC_AUTH_SERVICE,
   USER_SERVICE,
 } from '@config/constants';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RefreshPassword } from './dto/refresh-password.dto';
 
 const UserService = () => Inject(USER_SERVICE);
@@ -44,6 +44,7 @@ export class AuthController {
     @UserService() private userService: IUserService,
   ) {}
 
+  @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, description: 'User logged successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiBody({ type: LoginUserDto })
@@ -60,6 +61,7 @@ export class AuthController {
       .json({ message: 'Успешно авторизован!', user });
   }
 
+  @ApiOperation({ summary: 'Register new user' })
   @ApiResponse({ status: 201, description: 'User created successfully' })
   @ApiResponse({ status: 400, description: 'User already exist in system' })
   @ApiBody({ type: CreateUserDto })
@@ -76,6 +78,7 @@ export class AuthController {
       .json({ message: 'Ваш аккаунт был создан успешно!', user });
   }
 
+  @ApiOperation({ summary: 'Fast registration' })
   @ApiResponse({ status: 201, description: 'User created successfully' })
   @ApiResponse({ status: 400, description: 'User already exist in system' })
   @ApiBody({ type: FastRegisterDto })
@@ -92,6 +95,7 @@ export class AuthController {
       .json({ message: 'Вы успешно прошли быструю регистрацию!', user });
   }
 
+  @ApiOperation({ summary: 'Google auth' })
   @ApiResponse({ status: 201, description: 'User created successfully' })
   @ApiResponse({ status: 200, description: 'User successfully logged in' })
   @ApiBody({ type: typeof { id_token: String } })
@@ -116,6 +120,7 @@ export class AuthController {
       .json({ message: 'Вы успешно авторизовались!', user });
   }
 
+  @ApiOperation({ summary: 'Apple auth' })
   @ApiResponse({ status: 201, description: 'User created successfully' })
   @ApiResponse({ status: 200, description: 'User successfully logged in' })
   @ApiBody({ type: AppleLoginDto })
@@ -139,6 +144,7 @@ export class AuthController {
       .json({ message: 'Вы успешно авторизовались!', user });
   }
 
+  @ApiOperation({ summary: 'Apple mobile auth' })
   @ApiResponse({ status: 201, description: 'User created successfully' })
   @ApiResponse({ status: 200, description: 'User successfully logged in' })
   @ApiBody({ type: AppleSignDto })
@@ -165,6 +171,7 @@ export class AuthController {
       .json({ message: 'Вы успешно авторизовались!', user });
   }
 
+  @ApiOperation({ summary: 'Vk auth' })
   @ApiBody({ type: VKAuthDto })
   @ApiResponse({ status: 201, description: 'User created successfully' })
   @ApiResponse({ status: 200, description: 'User successfully logged in' })
@@ -194,6 +201,7 @@ export class AuthController {
       .json({ message: 'Вы успешно авторизовались!', user });
   }
 
+  @ApiOperation({ summary: 'Refresh password' })
   @ApiResponse({
     status: 201,
     description: 'User refresh code created successfully',
@@ -207,6 +215,7 @@ export class AuthController {
     return result;
   }
 
+  @ApiOperation({ summary: 'Password update' })
   @ApiResponse({
     status: 201,
     description: 'User password updated successfully',

@@ -20,7 +20,13 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Elite } from '@persistence/app/elite/elite.entity';
 import { User } from '@persistence/app/user/user.entity';
 import { CreateEliteDto } from './dto/create.dto';
@@ -32,8 +38,8 @@ const EliteService = () => Inject(ELITE_SERVICE);
 export class EliteController {
   constructor(@EliteService() private eliteService: IEliteService) {}
 
-  @ApiResponse({ status: 201, description: 'Topic created successfully' })
-  @ApiResponse({ status: 400, description: 'You already have active topic!' })
+  @ApiOperation({ summary: 'Create new elite' })
+  @ApiResponse({ status: 201, description: 'Elites created successfully' })
   @ApiBody({ type: CreateEliteDto })
   @Post('create')
   @HttpCode(201)
@@ -62,14 +68,16 @@ export class EliteController {
     };
   }
 
-  @ApiResponse({ status: 200, description: 'Topics received successfully' })
+  @ApiOperation({ summary: 'Receive all elites' })
+  @ApiResponse({ status: 200, description: 'Elite received successfully' })
   @Get()
   @HttpCode(200)
   async findAll() {
     return this.eliteService.receive();
   }
 
-  @ApiResponse({ status: 200, description: 'Topic counted successfully' })
+  @ApiOperation({ summary: 'Count elites' })
+  @ApiResponse({ status: 200, description: 'Elite counted successfully' })
   @Get('count')
   @HttpCode(200)
   async countElites() {
@@ -78,7 +86,8 @@ export class EliteController {
     return elites.length;
   }
 
-  @ApiResponse({ status: 200, description: 'Topics successfully cleared' })
+  @ApiOperation({ summary: 'Clear elite' })
+  @ApiResponse({ status: 200, description: 'Elite successfully cleared' })
   @Delete()
   @HttpCode(200)
   @Roles(RolesList.ADMIN)
@@ -87,7 +96,8 @@ export class EliteController {
     return this.eliteService.clear();
   }
 
-  @ApiResponse({ status: 200, description: 'Topic counted successfully' })
+  @ApiOperation({ summary: 'Elite delete by user id' })
+  @ApiResponse({ status: 200, description: 'Elite deleted successfully' })
   @ApiParam({ name: 'userId', type: Number, required: true })
   @Delete(':userId')
   @HttpCode(200)

@@ -13,7 +13,13 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { Message } from '@persistence/chat/message/message.entity';
 import { CreateMessageDto } from './dto/create.dto';
 
@@ -28,6 +34,7 @@ export class MessageController {
     @MessageService() private messageService: IMessageService,
   ) {}
 
+  @ApiOperation({ summary: 'Create message' })
   @ApiResponse({ status: 201, description: 'Messages created successfully' })
   @ApiBody({ type: CreateMessageDto })
   @Post()
@@ -39,6 +46,7 @@ export class MessageController {
     return message;
   }
 
+  @ApiOperation({ summary: 'Receive messages by dialog id' })
   @ApiResponse({ status: 200, description: 'Messages found' })
   @ApiResponse({ status: 404, description: 'Messages not found' })
   @ApiParam({
@@ -52,6 +60,7 @@ export class MessageController {
     return this.messageService.findByDialogId(dialogId);
   }
 
+  @ApiOperation({ summary: 'Delete message' })
   @ApiResponse({ status: 200, description: 'Message deleted' })
   @ApiResponse({ status: 404, description: 'Messages not found' })
   @ApiParam({
@@ -65,6 +74,7 @@ export class MessageController {
     return this.messageService.deleteOne(messageId);
   }
 
+  @ApiOperation({ summary: 'Delete messages by dialog id' })
   @ApiResponse({ status: 200, description: 'Messages deleted' })
   @ApiResponse({ status: 404, description: 'Dialog not found' })
   @ApiResponse({ status: 404, description: 'Messages not found' })

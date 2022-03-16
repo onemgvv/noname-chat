@@ -33,7 +33,13 @@ import { NewBlockInterface } from '@domain/app/user/interface/new-block.interfac
 import { Helper } from '@utils/app.helper';
 import { AppGateway } from '@utils/gateways/app.gateway';
 import { Server } from 'socket.io';
-import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 const UserService = () => Inject(USER_SERVICE);
 const FilestoreService = () => Inject(FILESTORE_SERVICE);
@@ -51,6 +57,7 @@ export class UsersController {
     this.server = appGateway.server;
   }
 
+  @ApiOperation({ summary: 'Set role to user' })
   @ApiResponse({
     status: 200,
     description: 'Role [rolename] added to user [user.email]',
@@ -73,6 +80,7 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({ summary: 'Give premium to user' })
   @ApiResponse({
     status: 200,
     description: 'Premium added to user',
@@ -103,6 +111,7 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({ summary: 'Delete users role' })
   @ApiResponse({
     status: 200,
     description: 'Role removed from user',
@@ -136,9 +145,10 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({ summary: 'Remove premium from user' })
   @ApiResponse({
     status: 200,
-    description: 'Premium r ole removed from user',
+    description: 'Premium role removed from user',
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiParam({
@@ -155,6 +165,7 @@ export class UsersController {
     return { status: true, user };
   }
 
+  @ApiOperation({ summary: 'Remove role "Premium"' })
   @ApiResponse({
     status: 200,
     description: 'Role removed from user',
@@ -166,6 +177,7 @@ export class UsersController {
     return { status: true, user };
   }
 
+  @ApiOperation({ summary: 'Block user' })
   @ApiResponse({
     status: 200,
     description: 'User blocked',
@@ -191,6 +203,7 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({ summary: 'Unblock user' })
   @ApiResponse({
     status: 200,
     description: 'User unblocked',
@@ -217,6 +230,7 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({ summary: 'Receive users blocklist' })
   @ApiResponse({
     status: 200,
     description: 'Blocklist received',
@@ -234,6 +248,7 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({ summary: 'Find users blacklist' })
   @ApiResponse({
     status: 200,
     description: 'Users blocklist received',
@@ -259,6 +274,7 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({ summary: 'Receive all users' })
   @ApiResponse({
     status: 200,
     description: 'Users received',
@@ -272,6 +288,7 @@ export class UsersController {
     return { message: 'Пользователи найдены', users };
   }
 
+  @ApiOperation({ summary: 'Get user by email' })
   @ApiResponse({
     status: 200,
     description: 'User founded',
@@ -290,6 +307,7 @@ export class UsersController {
     return { message: 'Пользователи найдены', users };
   }
 
+  @ApiOperation({ summary: 'get user by id' })
   @ApiResponse({
     status: 200,
     description: 'User founded',
@@ -308,6 +326,7 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Пользователь найден', user };
   }
 
+  @ApiOperation({ summary: 'Get user by code' })
   @ApiResponse({
     status: 200,
     description: 'User founded',
@@ -326,6 +345,7 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Пользователь найден', user };
   }
 
+  @ApiOperation({ summary: 'Update user' })
   @ApiResponse({
     status: 200,
     description: 'User updated',
@@ -347,6 +367,7 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({ summary: 'Change users password' })
   @ApiResponse({
     status: 200,
     description: 'Password updated',
@@ -363,6 +384,7 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Ваш пароль успешно обновлен' };
   }
 
+  @ApiOperation({ summary: 'Update users rating' })
   @ApiResponse({
     status: 200,
     description: 'rating updated',
@@ -376,6 +398,7 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Рейтинг изменен', user };
   }
 
+  @ApiOperation({ summary: 'receive memojies' })
   @ApiResponse({
     status: 200,
     description: 'Memoji uploaded',
@@ -393,6 +416,7 @@ export class UsersController {
     return { statusCode: HttpStatus.OK, images };
   }
 
+  @ApiOperation({ summary: 'Update users photo' })
   @ApiResponse({
     status: 200,
     description: 'Photo updated',
@@ -408,6 +432,7 @@ export class UsersController {
     return this.userService.update(currentUser.id, updateDto);
   }
 
+  @ApiOperation({ summary: 'Delete users account' })
   @ApiResponse({
     status: 200,
     description: 'Users account deleted',
@@ -420,6 +445,7 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Ваш аккаунт удален успешно!' };
   }
 
+  @ApiOperation({ summary: 'Delete user' })
   @ApiResponse({
     status: 200,
     description: 'User deleted',
@@ -439,6 +465,7 @@ export class UsersController {
     return { status: HttpStatus.OK, message: 'Пользователь успешно удален!' };
   }
 
+  @ApiOperation({ summary: 'ban user' })
   @ApiResponse({
     status: 200,
     description: 'User banned',
@@ -454,6 +481,7 @@ export class UsersController {
     return { status: 200, result };
   }
 
+  @ApiOperation({ summary: 'unban user' })
   @ApiResponse({
     status: 200,
     description: 'User unbanned',
@@ -468,6 +496,7 @@ export class UsersController {
     return { status: 200, result };
   }
 
+  @ApiOperation({ summary: 'receive users by age groups' })
   @ApiResponse({
     status: 200,
     description: 'Users age groups received',
@@ -481,6 +510,7 @@ export class UsersController {
     return Helper.sortByAgesGroups(users);
   }
 
+  @ApiOperation({ summary: 'recevive users by gender groups' })
   @ApiResponse({
     status: 200,
     description: 'Users gender groups received',
@@ -496,6 +526,7 @@ export class UsersController {
     return { men: menCount, women: womenCount };
   }
 
+  @ApiOperation({ summary: 'receive users by geo' })
   @ApiResponse({
     status: 200,
     description: 'Users geographic groups received',

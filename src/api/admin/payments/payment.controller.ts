@@ -27,11 +27,19 @@ import {
   USER_SERVICE,
   CLOUDPAYMENTS_SERVICE,
 } from '@common/config/constants';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 const UserService = () => Inject(USER_SERVICE);
 const PaymentService = () => Inject(PAYMENT_SERVICE);
 const CloudPaymentsService = () => Inject(CLOUDPAYMENTS_SERVICE);
 
+@ApiTags('Admin payments')
 @Controller('payment')
 export class PaymentController {
   constructor(
@@ -40,24 +48,46 @@ export class PaymentController {
     @CloudPaymentsService() private cloudPaymentsService: ICloudPaymentsService,
   ) {}
 
+  @ApiOperation({ summary: 'Create new payment' })
+  @ApiResponse({ status: 201, description: 'Payment created successfully' })
+  @ApiBody({ type: CreatePaymentDto })
   @Post()
   @HttpCode(201)
   async createPayment(@Body() dto: CreatePaymentDto) {
     return this.paymentService.create(dto);
   }
 
+  @ApiOperation({ summary: 'Get payment by account id' })
+  @ApiResponse({ status: 200, description: 'Payment successfully founded' })
+  @ApiResponse({ status: 404, description: 'Payment not found' })
+  @ApiParam({
+    name: 'accountId',
+    type: String,
+    description: 'account id from subscribtion',
+  })
   @Get('/accountId/:accountId')
   @HttpCode(200)
   async getByAccountId(@Param('accountId') accountId: string) {
     return this.paymentService.getByAccountId(accountId);
   }
 
+  @ApiOperation({ summary: 'Get payment by id' })
+  @ApiResponse({ status: 200, description: 'Payment successfully founded' })
+  @ApiResponse({ status: 404, description: 'Payment not found' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'payment id',
+  })
   @Get('/id/:id')
   @HttpCode(200)
   async getById(@Param('id') id: number) {
     return this.paymentService.getById(id);
   }
 
+  @ApiOperation({ summary: 'Get all payments' })
+  @ApiResponse({ status: 200, description: 'Payments successfully founded' })
+  @ApiResponse({ status: 404, description: 'Payments not found' })
   @Get()
   @HttpCode(200)
   async listAll() {
@@ -68,6 +98,12 @@ export class PaymentController {
     return payment;
   }
 
+  @ApiOperation({ summary: 'Unsubscribe user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Subscribtion successfully canceled',
+  })
+  @ApiResponse({ status: 404, description: 'Subscribtion not found' })
   @Delete('subscribtion')
   @HttpCode(200)
   @UseGuards(CustomAuthGuard)
@@ -76,6 +112,13 @@ export class PaymentController {
     return this.cloudPaymentsService.unsubscribe(id);
   }
 
+  @ApiOperation({ summary: 'Cancel subscribtion' })
+  @ApiResponse({
+    status: 200,
+    description: 'Subscribtion successfully canceled',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({ name: 'id', type: Number, description: 'user id' })
   @Delete('subscription/:id')
   @HttpCode(200)
   @UseGuards(CustomAuthGuard)

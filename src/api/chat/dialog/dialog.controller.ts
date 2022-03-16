@@ -1,4 +1,10 @@
-import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateDialogDto } from './dto/create.dto';
 import { TransformInterceptor } from '@common/interceptors/transform.interceptor';
 import { DIALOG_SERVICE } from '@config/constants';
@@ -24,6 +30,7 @@ const DialogService = () => Inject(DIALOG_SERVICE);
 export class DialogController {
   constructor(@DialogService() private dialogService: IDialogService) {}
 
+  @ApiOperation({ summary: 'Create dialog' })
   @ApiResponse({ status: 201, description: 'Dialog created successfully' })
   @ApiBody({ type: CreateDialogDto })
   @Post()
@@ -33,6 +40,7 @@ export class DialogController {
     return this.dialogService.create(dialogDto);
   }
 
+  @ApiOperation({ summary: 'Find dialogs by author' })
   @ApiResponse({ status: 200, description: 'Dialogs found by author' })
   @ApiResponse({ status: 404, description: 'Dialogs not found' })
   @ApiParam({
@@ -48,6 +56,7 @@ export class DialogController {
     return this.dialogService.findByAuthor(userId);
   }
 
+  @ApiOperation({ summary: 'Find dialog by id' })
   @ApiResponse({ status: 200, description: 'Dialog found' })
   @ApiResponse({ status: 404, description: 'Dialog not found' })
   @ApiParam({
@@ -61,6 +70,7 @@ export class DialogController {
     return this.dialogService.findOne(dialogId);
   }
 
+  @ApiOperation({ summary: 'Delete dialog by id' })
   @ApiResponse({ status: 200, description: 'Dialog deleted successfully' })
   @ApiResponse({ status: 404, description: 'Dialog not found' })
   @ApiParam({

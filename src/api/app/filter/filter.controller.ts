@@ -1,4 +1,10 @@
-import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { TransformInterceptor } from '@common/interceptors/transform.interceptor';
 import { CustomAuthGuard } from '@common/guards/custom-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
@@ -38,6 +44,7 @@ export class FilterController {
     @UserService() private userService: IUserService,
   ) {}
 
+  @ApiOperation({ summary: 'Create new filter' })
   @ApiResponse({ status: 201, description: 'Filter successfully created' })
   @ApiBody({ type: CreateFilterDto })
   @Post('create')
@@ -59,6 +66,7 @@ export class FilterController {
     };
   }
 
+  @ApiOperation({ summary: 'get filter by user id' })
   @ApiResponse({ status: 200, description: 'Filter successfully found' })
   @ApiParam({
     name: 'id',
@@ -81,6 +89,7 @@ export class FilterController {
     };
   }
 
+  @ApiOperation({ summary: 'Update filter' })
   @ApiResponse({ status: 200, description: 'Filter successfully updated' })
   @ApiParam({
     name: 'id',
@@ -106,6 +115,7 @@ export class FilterController {
     };
   }
 
+  @ApiOperation({ summary: 'delete filter by user id' })
   @ApiResponse({ status: 200, description: 'Filter successfully deleted' })
   @ApiParam({
     name: 'userId',

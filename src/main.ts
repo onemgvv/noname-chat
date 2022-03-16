@@ -49,8 +49,8 @@ async function bootstrap() {
 
   // swagger configuration
   const config = new DocumentBuilder()
-    .setTitle('Democracy API Documentation')
-    .setDescription('Democracy API Documentation created with OpenAPI')
+    .setTitle('Noname Backend API Documentation')
+    .setDescription('Noname Backend API Documentation created with OpenAPI')
     .setVersion('1.0')
     .addTag('application')
     .addBearerAuth()

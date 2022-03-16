@@ -20,13 +20,24 @@ import { CreateStoriesDto } from './dto/create-story.dto';
 import { STORY_SERVICE } from '@config/constants';
 import { IStoryService } from '@domain/admin/story/interface/story-service.interface';
 import { Story } from '@persistence/admin/story/story.entity';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 const StoryService = () => Inject(STORY_SERVICE);
 
+@ApiTags('Admin stories')
 @Controller('admin/stories')
 export class StoryController {
   constructor(@StoryService() private storiesService: IStoryService) {}
 
+  @ApiOperation({ summary: 'Create new Story' })
+  @ApiResponse({ status: 201, description: 'Story created successfully' })
+  @ApiBody({ type: CreateStoriesDto })
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @Roles(RolesList.ADMIN)
@@ -36,6 +47,11 @@ export class StoryController {
     return { status: true, storie };
   }
 
+  @ApiOperation({ summary: 'Add content to story' })
+  @ApiResponse({ status: 201, description: 'Content created' })
+  @ApiResponse({ status: 404, description: 'Story not found' })
+  @ApiParam({ name: 'id', description: 'Story id', type: Number })
+  @ApiBody({ type: CreateContentDto })
   @Post(':id/content')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -45,6 +61,10 @@ export class StoryController {
     return { status: true, storie };
   }
 
+  @ApiOperation({ summary: 'Publicate story' })
+  @ApiResponse({ status: 201, description: 'Story published' })
+  @ApiResponse({ status: 404, description: 'Story not found' })
+  @ApiParam({ name: 'id', description: 'Story id', type: Number })
   @Patch(':id/publish')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -53,12 +73,19 @@ export class StoryController {
     return { status: result };
   }
 
+  @ApiOperation({ summary: 'Get story by id' })
+  @ApiResponse({ status: 201, description: 'Story founded' })
+  @ApiResponse({ status: 404, description: 'Story not found' })
+  @ApiParam({ name: 'id', description: 'Story id', type: Number })
   @Get(':id/pages')
   async getStoriePages(@Param('id') id: number) {
     const result: number = await this.storiesService.getStoriePages(id);
     return { status: true, pages: result };
   }
 
+  @ApiOperation({ summary: 'Get active stories' })
+  @ApiResponse({ status: 201, description: 'Stories founded' })
+  @ApiResponse({ status: 404, description: 'Stories not found' })
   @Get('active')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -67,6 +94,9 @@ export class StoryController {
     return { status: true, stories };
   }
 
+  @ApiOperation({ summary: 'Get closed stories' })
+  @ApiResponse({ status: 201, description: 'Stories founded' })
+  @ApiResponse({ status: 404, description: 'Stories not found' })
   @Get('closed')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -75,6 +105,9 @@ export class StoryController {
     return { status: true, stories };
   }
 
+  @ApiOperation({ summary: 'Get all stories' })
+  @ApiResponse({ status: 201, description: 'Stories founded' })
+  @ApiResponse({ status: 404, description: 'Stories not found' })
   @Get()
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -83,6 +116,10 @@ export class StoryController {
     return { status: true, stories };
   }
 
+  @ApiOperation({ summary: 'Remove story content' })
+  @ApiResponse({ status: 201, description: 'Story contend removed' })
+  @ApiResponse({ status: 404, description: 'Story not found' })
+  @ApiParam({ name: 'id', description: 'content id', type: Number })
   @Delete('content/:id')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -92,6 +129,9 @@ export class StoryController {
     return { status: result };
   }
 
+  @ApiOperation({ summary: 'Remove all stories' })
+  @ApiResponse({ status: 201, description: 'Stories removed' })
+  @ApiResponse({ status: 404, description: 'Stories not found' })
   @Delete()
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -100,6 +140,9 @@ export class StoryController {
     return { status: true };
   }
 
+  @ApiOperation({ summary: 'Remove story by id' })
+  @ApiResponse({ status: 201, description: 'Story removed' })
+  @ApiResponse({ status: 404, description: 'Story not found' })
   @Delete(':id')
   @Roles(RolesList.ADMIN)
   @UseGuards(CustomAuthGuard, RolesGuard)
