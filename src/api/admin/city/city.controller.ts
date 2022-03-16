@@ -1,4 +1,10 @@
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiTags,
+  ApiResponse,
+  ApiBody,
+  ApiProperty,
+} from '@nestjs/swagger';
 import { CITY_SERVICE, COUNTRY_SERVICE } from '@config/constants';
 import {
   Controller,
@@ -38,6 +44,9 @@ export class CityController {
     @CountryService() private readonly countryService: ICoutnryService,
   ) {}
 
+  @ApiOperation({ summary: 'Create new city' })
+  @ApiResponse({ status: 201, description: 'City succesfully created' })
+  @ApiBody({ type: CreateCityDto })
   @Post()
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -56,6 +65,9 @@ export class CityController {
     });
   }
 
+  @ApiOperation({ summary: 'Create new country' })
+  @ApiResponse({ status: 201, description: 'Country succesfully created' })
+  @ApiBody({ type: CreateCountryDto })
   @Post('country')
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -64,6 +76,11 @@ export class CityController {
     return this.countryService.create(dto);
   }
 
+  @ApiOperation({ summary: 'Edit country' })
+  @ApiResponse({ status: 201, description: 'Country succesfully updated' })
+  @ApiResponse({ status: 404, description: 'Country not found' })
+  @ApiProperty({ name: 'id', type: Number, description: 'country id' })
+  @ApiBody({ type: UpdateCountryDto })
   @Patch('country/:id')
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -72,6 +89,11 @@ export class CityController {
     return this.countryService.update(id, dto);
   }
 
+  @ApiOperation({ summary: 'Edit city' })
+  @ApiResponse({ status: 201, description: 'City succesfully updated' })
+  @ApiResponse({ status: 404, description: 'City not found' })
+  @ApiProperty({ name: 'id', type: Number, description: 'city id' })
+  @ApiBody({ type: UpdateCountryDto })
   @Patch('/update/:id')
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -80,6 +102,9 @@ export class CityController {
     return this.citiesService.update(id, dto);
   }
 
+  @ApiOperation({ summary: 'Remove country' })
+  @ApiResponse({ status: 201, description: 'Country succesfully deleted' })
+  @ApiProperty({ name: 'id', type: Number, description: 'country id' })
   @Delete('country/:id')
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -89,6 +114,9 @@ export class CityController {
     return response.status(200).json({ statusCode: 200, success: true });
   }
 
+  @ApiOperation({ summary: 'Remove city' })
+  @ApiResponse({ status: 201, description: 'City succesfully deleted' })
+  @ApiProperty({ name: 'id', type: Number, description: 'city id' })
   @Delete(':id')
   @Roles(RolesList.ADMIN, RolesList.MODERATOR)
   @UseGuards(CustomAuthGuard, RolesGuard)
@@ -105,6 +133,10 @@ export class CityController {
     });
   }
 
+  @ApiOperation({ summary: 'Find city by id' })
+  @ApiResponse({ status: 201, description: 'City succesfully found' })
+  @ApiResponse({ status: 404, description: 'City not found' })
+  @ApiProperty({ name: 'id', type: Number, description: 'country id' })
   @Get('id/:id')
   async findOne(@Param('id') id: number, @Res() response: Response) {
     const city = await this.citiesService.findOne(id);
@@ -117,6 +149,10 @@ export class CityController {
     });
   }
 
+  @ApiOperation({ summary: 'Find city by name' })
+  @ApiResponse({ status: 201, description: 'City successfully found' })
+  @ApiResponse({ status: 404, description: 'City not found' })
+  @ApiProperty({ name: 'name', type: Number, description: 'name of the city' })
   @Get('/name/:name')
   async findByName(@Param('name') name: string, @Res() response: Response) {
     const city = await this.citiesService.findByName(name);
@@ -129,6 +165,15 @@ export class CityController {
     });
   }
 
+  @ApiOperation({ summary: 'Find cities by country name' })
+  @ApiResponse({ status: 201, description: 'Cities successfully found' })
+  @ApiResponse({ status: 404, description: 'Country not found' })
+  @ApiResponse({ status: 404, description: 'Country havent cities' })
+  @ApiProperty({
+    name: 'name',
+    type: Number,
+    description: 'name of the country',
+  })
   @Get('country/:name/cities')
   async findAllCoutryCities(
     @Param('name') name: string,
@@ -140,6 +185,9 @@ export class CityController {
     return response.json({ statusCode: HttpStatus.OK, cities: countryCities });
   }
 
+  @ApiOperation({ summary: 'Find all countries' })
+  @ApiResponse({ status: 201, description: 'Countries successfully found' })
+  @ApiResponse({ status: 404, description: 'Countries not found' })
   @Get('country')
   async findAll(@Res() response: Response) {
     const countries = await this.countryService.receiveAll();
@@ -147,6 +195,9 @@ export class CityController {
     return response.json({ statusCode: HttpStatus.OK, countries });
   }
 
+  @ApiOperation({ summary: 'Find all cities' })
+  @ApiResponse({ status: 201, description: 'Cities successfully found' })
+  @ApiResponse({ status: 404, description: 'Cities not found' })
   @Get()
   async findAllCities(@Res() response: Response) {
     const cities = await this.citiesService.findAll();
